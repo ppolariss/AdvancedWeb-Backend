@@ -1,0 +1,15 @@
+version: '1'
+
+networks:
+  db-network:
+    driver: bridge
+    name: db-network
+
+services:
+  db-system-service:
+    image: ppolariss/database_project:v1
+    environment:
+      - DB_URL=root:root@tcp(host.docker.internal:3306)/price_comparator
+    networks:
+      - db-network
+    container_name: db-system-service

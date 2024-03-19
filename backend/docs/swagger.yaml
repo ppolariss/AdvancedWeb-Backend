@@ -1,0 +1,231 @@
+basePath: /api
+definitions:
+  auth.LoginRequest:
+    properties:
+      password:
+        minLength: 3
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  auth.RegisterRequest:
+    properties:
+      age:
+        type: integer
+      email:
+        type: string
+      gender:
+        type: string
+      password:
+        minLength: 3
+        type: string
+      phone:
+        type: string
+      username:
+        type: string
+    required:
+    - age
+    - email
+    - gender
+    - password
+    - phone
+    - username
+    type: object
+  auth.TokenResponse:
+    properties:
+      access:
+        type: string
+      message:
+        type: string
+    type: object
+  common.ErrorDetailElement:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+      param:
+        type: string
+      struct_field:
+        type: string
+      tag:
+        type: string
+      value: {}
+    type: object
+  common.HttpError:
+    properties:
+      code:
+        type: integer
+      detail:
+        items:
+          $ref: '#/definitions/common.ErrorDetailElement'
+        type: array
+      message:
+        type: string
+    type: object
+  models.MyTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
+  models.User:
+    properties:
+      age:
+        type: integer
+      created_at:
+        $ref: '#/definitions/models.MyTime'
+      email:
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      phone:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact:
+    email: 2673986789@qq.com
+    name: Maintainer Polaris
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Advanced Web Backend
+  version: 1.0.0
+paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Login
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Login
+      tags:
+      - Auth
+  /api/register:
+    post:
+      consumes:
+      - application/json
+      description: Register
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Register
+      tags:
+      - Auth
+  /api/users:
+    put:
+      consumes:
+      - application/json
+      description: Update user
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Update user
+      tags:
+      - User
+  /api/users/data:
+    get:
+      consumes:
+      - application/json
+      description: Get user info
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get user info
+      tags:
+      - User
+swagger: "2.0"
