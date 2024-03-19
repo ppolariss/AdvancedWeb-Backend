@@ -50,16 +50,37 @@ func UpdateUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	var user User
-	err = common.ValidateBody(c, &user)
+	var updateBody UpdateUserRequest
+	err = common.ValidateBody(c, &updateBody)
 	if err != nil {
 		return err
 	}
-	if tmpUser.ID != user.ID {
-		return common.Forbidden("You can only update your own info")
+
+	//var pwdChanged bool
+
+	user, err := GetUserByID(tmpUser.ID)
+	if len(updateBody.Password) != 0 {
+		user.Password = utils.MakePassword(updateBody.Password)
+		//pwdChanged = true
 	}
-	if len(user.Password) != 0 {
-		user.Password = utils.MakePassword(user.Password)
+	if updateBody.Age != 0 {
+		user.Age = updateBody.Age
 	}
-	return user.Update()
+	if len(updateBody.Email) != 0 {
+		user.Email = updateBody.Email
+	}
+	if len(updateBody.Phone) != 0 {
+		user.Phone = updateBody.Phone
+	}
+	if len(updateBody.Gender) != 0 {
+		user.Gender = updateBody.Gender
+	}
+	err = user.Update()
+	if err != nil {
+		return err
+	}
+	//if pwdChanged {
+	//	return DeleteUserJWTSecret(tmpUser.ID)
+	//}
+	return nil
 }

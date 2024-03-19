@@ -66,6 +66,18 @@ const (
 	//JWTTypeRefresh = "refresh"
 )
 
+//func DeleteUserJWTSecret(userID int) error {
+//	return DB.Delete(&UserJwtSecret{}, userID).Error
+//}
+
+//func CheckJWTToken(token string, secret string) (claims *UserClaims, err error) {
+//	claims = new(UserClaims)
+//	_, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+//		return []byte(secret), nil
+//	})
+//	return
+//}
+
 func (user *LoginUser) CreateJWTToken() (accessToken string, err error) {
 	// get jwt key and secret
 	var key, secret string

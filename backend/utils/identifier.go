@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"fmt"
 )
 
 func MakePassword(rawPassword string) string {
@@ -10,6 +11,8 @@ func MakePassword(rawPassword string) string {
 }
 
 func CheckPassword(rawPassword, encryptPassword string) bool {
+	fmt.Println("rawPassword", rawPassword)
+	fmt.Println("encryptPassword", encryptPassword)
 	return MakeMD5(rawPassword) == encryptPassword
 }
 

@@ -11,7 +11,7 @@ type User struct {
 	Password  string `json:"password" gorm:"not null;size:64"`
 	Email     string `json:"email" gorm:"size:64"`
 	Age       int8   `json:"age" gorm:"not null"`
-	Gender    string `json:"gender" gorm:"not null"`
+	Gender    string `json:"gender" gorm:"not null;type:char(5)"`
 	Phone     string `json:"phone" gorm:"not null;type:char(13)"`
 	CreatedAt MyTime `json:"created_at" gorm:"autoCreateTime"`
 }
@@ -56,15 +56,14 @@ func GetUserByID(userID int) (user *User, err error) {
 }
 
 func GetUserByUsername(username string) (user *User, err error) {
-	err = DB.Transaction(func(tx *gorm.DB) error {
-		err := tx.Omit("Password").Where("username = ?", username).Take(&user).Error
-		if err != nil {
-			if !errors.Is(err, gorm.ErrRecordNotFound) {
-				return err
-			}
+	//Omit("Password").
+	err = DB.Where("username = ?", username).Take(&user).Error
+	if err != nil {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, err
 		}
-		return nil
-	})
+		return nil, nil
+	}
 	return
 }
 
@@ -79,7 +78,8 @@ func (user *User) Update() error {
 			return result.Error
 		}
 		if result.RowsAffected == 0 {
-			return errors.New("user not found")
+			return errors.New("user not found or no change")
+			//	todo: return nil or error
 		}
 		return nil
 	})

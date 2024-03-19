@@ -9,16 +9,17 @@ RUN apk add --no-cache gcc\
 
 COPY . .
 
-RUN go build -o DBpj
+RUN go build -o AdvancedWebpj
 
 FROM alpine
 
 WORKDIR /app
 
-COPY --from=builder /app/DBpj .
+COPY --from=builder /app/AdvancedWebpj .
 
 ENV DB_URL root:root@tcp(host.docker.internal:3306)/price_comparator?charset=utf8mb4&parseTime=True&loc=Local
+ENV TZ=Asia/Shanghai
 
 EXPOSE 8080
 
-ENTRYPOINT ["./DBpj"]
+ENTRYPOINT ["./AdvancedWebpj"]

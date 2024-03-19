@@ -87,14 +87,15 @@ func Register(c *fiber.Ctx) error {
 	if user != nil {
 		return common.BadRequest("用户名已存在")
 	}
-
-	user.Username = body.Username
-	user.Password = utils.MakePassword(body.Password)
-	user.Gender = body.Gender
-	user.Email = body.Email
-	user.Phone = body.Phone
-	user.Age = body.Age
-	user.CreatedAt = MyTime{Time: time.Now()}
+	user = &User{
+		Username:  body.Username,
+		Password:  utils.MakePassword(body.Password),
+		Gender:    body.Gender,
+		Email:     body.Email,
+		Phone:     body.Phone,
+		Age:       body.Age,
+		CreatedAt: MyTime{Time: time.Now()},
+	}
 	return user.Create()
 }
 
