@@ -90,6 +90,22 @@ definitions:
       username:
         type: string
     type: object
+  user.ChangePasswordRequest:
+    properties:
+      email:
+        type: string
+      new_password:
+        type: string
+      old_password:
+        type: string
+    type: object
+  user.TokenResponse:
+    properties:
+      access:
+        type: string
+      message:
+        type: string
+    type: object
 info:
   contact:
     email: 2673986789@qq.com
@@ -226,6 +242,36 @@ paths:
           schema:
             $ref: '#/definitions/common.HttpError'
       summary: Get user info
+      tags:
+      - User
+  /api/users/password:
+    put:
+      consumes:
+      - application/json
+      description: Change password by old password or email
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/user.ChangePasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Change password
       tags:
       - User
 swagger: "2.0"

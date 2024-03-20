@@ -15,8 +15,6 @@ type LoginUser struct {
 // GetGeneralUser
 // return user from fiber.Ctx or jwt
 func GetGeneralUser(c *fiber.Ctx) (user *LoginUser, err error) {
-	//fmt.Println(c.Get("type"))
-
 	if c.Locals("user") != nil {
 		user = c.Locals("user").(*LoginUser)
 		return
@@ -34,10 +32,10 @@ func GetGeneralUser(c *fiber.Ctx) (user *LoginUser, err error) {
 
 	// load user from database in transaction
 	err = user.CheckUserID()
-
 	if err != nil {
 		return
 	}
+
 	// save user in c.Locals
 	c.Locals("user", user)
 	return

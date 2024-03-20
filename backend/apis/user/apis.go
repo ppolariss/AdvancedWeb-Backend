@@ -56,13 +56,7 @@ func UpdateUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	//var pwdChanged bool
-
 	user, err := GetUserByID(tmpUser.ID)
-	if len(updateBody.Password) != 0 {
-		user.Password = utils.MakePassword(updateBody.Password)
-		//pwdChanged = true
-	}
 	if updateBody.Age != 0 {
 		user.Age = updateBody.Age
 	}
@@ -75,12 +69,63 @@ func UpdateUser(c *fiber.Ctx) error {
 	if len(updateBody.Gender) != 0 {
 		user.Gender = updateBody.Gender
 	}
+	return user.Update()
+}
+
+// ChangePassword @ChangePassword
+// @Router /api/users/password [put]
+// @Summary Change password
+// @Description Change password by old password or email
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param json body ChangePasswordRequest true "json"
+// @Success 200 {object} TokenResponse
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+func ChangePassword(c *fiber.Ctx) error {
+	tmpUser, err := GetGeneralUser(c)
+	if err != nil {
+		return err
+	}
+
+	var body ChangePasswordRequest
+	err = common.ValidateBody(c, &body)
+	if err != nil {
+		return err
+	}
+
+	user, err := GetUserByID(tmpUser.ID)
+	if err != nil {
+		return err
+	}
+
+	if len(body.OldPassword) > 0 {
+		ok := utils.CheckPassword(body.OldPassword, user.Password)
+		if !ok {
+			return common.Unauthorized("密码错误")
+		}
+	} else if len(body.Email) > 0 {
+		if body.Email != user.Email {
+			return common.Unauthorized("邮箱错误")
+		}
+	} else {
+		return common.BadRequest("参数错误")
+	}
+
+	user.Password = utils.MakePassword(body.NewPassword)
 	err = user.Update()
 	if err != nil {
 		return err
 	}
-	//if pwdChanged {
-	//	return DeleteUserJWTSecret(tmpUser.ID)
-	//}
-	return nil
+
+	tmpUser.Password = user.Password
+
+	access, err := tmpUser.CreateJWTToken()
+	if err != nil {
+		return err
+	}
+	return c.Status(200).JSON(TokenResponse{
+		Access: access,
+	})
 }

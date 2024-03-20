@@ -9,40 +9,40 @@ import (
 	"time"
 )
 
-func main() {
-	// 生成 JWT
-	token := jwt.New(jwt.SigningMethodHS256)
-
-	// 设置载荷（Payload）
-	claims := token.Claims.(jwt.MapClaims)
-	claims["username"] = "john.doe"
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-
-	// 生成签名
-	secret := []byte("your-secret-key")
-	signedToken, err := token.SignedString(secret)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-
-	fmt.Println("JWT:", signedToken)
-
-	// 解析 JWT
-	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
-		return secret, nil
-	})
-
-	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
-		username := claims["username"].(string)
-		expiration := claims["exp"].(float64)
-
-		fmt.Println("Username:", username)
-		fmt.Println("Expiration:", time.Unix(int64(expiration), 0))
-	} else {
-		fmt.Println("Invalid token:", err)
-	}
-}
+//func main() {
+//	// 生成 JWT
+//	token := jwt.New(jwt.SigningMethodHS256)
+//
+//	// 设置载荷（Payload）
+//	claims := token.Claims.(jwt.MapClaims)
+//	claims["username"] = "john.doe"
+//	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+//
+//	// 生成签名
+//	secret := []byte("your-secret-key")
+//	signedToken, err := token.SignedString(secret)
+//	if err != nil {
+//		fmt.Println("Error:", err)
+//		return
+//	}
+//
+//	fmt.Println("JWT:", signedToken)
+//
+//	// 解析 JWT
+//	parsedToken, err := jwt.Parse(signedToken, func(token *jwt.Token) (interface{}, error) {
+//		return secret, nil
+//	})
+//
+//	if claims, ok := parsedToken.Claims.(jwt.MapClaims); ok && parsedToken.Valid {
+//		username := claims["username"].(string)
+//		expiration := claims["exp"].(float64)
+//
+//		fmt.Println("Username:", username)
+//		fmt.Println("Expiration:", time.Unix(int64(expiration), 0))
+//	} else {
+//		fmt.Println("Invalid token:", err)
+//	}
+//}
 
 type UserJwtSecret struct {
 	ID     int    `json:"id" gorm:"primaryKey"`
@@ -51,14 +51,8 @@ type UserJwtSecret struct {
 
 type UserClaims struct {
 	jwt.RegisteredClaims
-	ID       int    `json:"id"`
-	UserType string `json:"user_type"`
-	Type     string `json:"type"`
-	//UserID               int       `json:"user_id"`
-	//UID                  int       `json:"uid"`
-	//Nickname             string    `json:"nickname"`
-	//JoinedTime           time.Time `json:"joined_time"`
-	//HasAnsweredQuestions bool      `json:"has_answered_questions"`
+	ID   int    `json:"id"`
+	Type string `json:"type"`
 }
 
 const (

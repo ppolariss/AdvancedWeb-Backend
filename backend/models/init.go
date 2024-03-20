@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/caarlos0/env/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -28,7 +27,7 @@ func InitConfig() (err error) {
 
 func InitDB() error {
 	err := InitConfig()
-	fmt.Println(Config.DbURL)
+	//fmt.Println(Config.DbURL)
 	if err != nil {
 		return err
 	}
