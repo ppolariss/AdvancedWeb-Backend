@@ -1,15 +1,17 @@
 version: '1'
 
 networks:
-  db-network:
+  advanced-web-network:
     driver: bridge
-    name: db-network
+    name: advanced-web-network
 
 services:
-  db-system-service:
-    image: ppolariss/database_project:v1
+  advanced-web-backend-service:
+    image: ppolariss/advanced_web_backend:v1
     environment:
-      - DB_URL=root:root@tcp(host.docker.internal:3306)/price_comparator
+      - DB_URL=root:root@tcp(host.docker.internal:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
     networks:
-      - db-network
-    container_name: db-system-service
+      - advanced-web-network
+    ports:
+      - "8080:8080"
+    container_name: advanced-web-backend-service
