@@ -24,7 +24,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	
+
 	err = app.Listen(":8080")
 	if err != nil {
 		log.Fatal(err)

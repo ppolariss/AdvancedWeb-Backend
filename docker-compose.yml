@@ -9,7 +9,7 @@ services:
   advanced-web-backend-service:
     image: ppolariss/advanced_web_backend:v1
     environment:
-      - DB_URL=root:root@tcp(host.docker.internal:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
+      - DB_URL=${DB_URL}
     networks:
       - advanced-web-network
     ports:

@@ -13,7 +13,7 @@ import (
 var DB *gorm.DB
 
 var Config struct {
-	DbURL string `env:"DB_URL" envDefault:"root:root@tcp(localhost:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local"`
+	DbURL string `env:"DB_URL" envDefault:"root:password@tcp(localhost:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local"`
 }
 
 func InitConfig() (err error) {
