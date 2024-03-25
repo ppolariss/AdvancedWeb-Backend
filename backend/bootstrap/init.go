@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/pprof"
 	"github.com/opentreehole/go-common"
 	"src/apis"
@@ -32,4 +33,5 @@ func registerMiddlewares(app *fiber.App) {
 	//	app.Use(common.MiddlewareCustomLogger)
 	//}
 	app.Use(pprof.New())
+	app.Use(cors.New())
 }
