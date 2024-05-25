@@ -1,5 +1,3 @@
-version: '1'
-
 networks:
   advanced-web-network:
     driver: bridge
@@ -10,11 +8,12 @@ volumes:
 
 services:
   advanced-web-backend-service:
-    image: ppolariss/advanced_web_backend:v1
+    image: ppolariss/advanced_web_backend:latest
     restart: unless-stopped
     environment:
-      - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
-      # - DB_URL=${DB_URL}
+      # - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
+      - MOSS_URL=${MOSS_URL}
+      - DB_URL=${DB_URL}
     networks:
       - advanced-web-network
     ports:
