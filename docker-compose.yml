@@ -13,7 +13,7 @@ services:
     environment:
       - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
       - MOSS_URL=${MOSS_URL}
-      - DB_URL=${DB_URL}
+      - MOSS_API_KEY=${MOSS_API_KEY}
     networks:
       - advanced-web-network
     ports:
