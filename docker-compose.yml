@@ -42,3 +42,10 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+
+  advanced-web-frontend-service:
+    container_name: frontend-service
+    image: ppolariss/advanced_web_frontend:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
