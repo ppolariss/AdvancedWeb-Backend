@@ -1,5 +1,3 @@
-version: '1'
-
 networks:
   advanced-web-network:
     driver: bridge
