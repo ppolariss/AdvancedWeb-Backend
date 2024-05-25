@@ -35,3 +35,10 @@ services:
       - "13306:3306"
     volumes:
       - db-data:/var/lib/mysql
+
+  driving-service:
+    container_name: driving-service
+    image: ppolariss/driving:latest
+    restart: unless-stopped
+    ports:
+      - "3000:3000"

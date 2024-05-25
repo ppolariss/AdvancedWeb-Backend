@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocket Test</title>
+</head>
+
+<body>
+
+  <script src="socket.io.js"></script>
+  <script>
+    // http://
+    const socket = io('ws://10.117.245.17:53000/');
+    //   console.log(socket);
+    socket.on('online', function (data) {
+      console.log(data);
+    });
+    socket.emit('init', {
+      id: '1',
+      roomID: 'testRoom',
+      model: 'poli',
+    });
+    socket.on('update', function (data) {
+      console.log('update')
+      // console.log("update", data)
+      console.log(data);
+    });
+    // socket.on("offline", function (data) {
+    //   console.log("offline");
+    //   console.log(data);
+    // });
+    // socket.emit('chat', {
+    //   type: 'private',
+    //   message: 'Hello',
+    //   id: '1',
+    //   // roomID: '1',
+    // })
+    // socket.on('message', function (data) {
+    //   console.log('message')
+    //   console.log(data);
+    // })
+  </script>
+</body>
+
+</html>
