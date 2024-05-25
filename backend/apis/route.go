@@ -4,6 +4,8 @@ import (
 	"github.com/gofiber/fiber/v2"
 	fiberSwagger "github.com/swaggo/fiber-swagger"
 	"src/apis/auth"
+	"src/apis/exam"
+	"src/apis/message"
 	"src/apis/user"
 	"src/models"
 )
@@ -25,10 +27,13 @@ func RegisterRoutes(app *fiber.App) {
 
 	groupWithoutAuthorization := app.Group("/api")
 	auth.RegisterRoutes(groupWithoutAuthorization)
+	message.RegisterRoutesWithoutAuthorization(groupWithoutAuthorization)
 
 	group := app.Group("/api")
 	group.Use(MiddlewareGetUser)
 	user.RegisterRoutes(group)
+	exam.RegisterRoutes(group)
+	message.RegisterRoutes(group)
 }
 
 func MiddlewareGetUser(c *fiber.Ctx) error {

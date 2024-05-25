@@ -4,6 +4,7 @@ import (
 	"github.com/caarlos0/env/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 	"log"
@@ -77,3 +78,7 @@ func InitDB() error {
 //
 //	return db, nil
 //}
+
+type Map = map[string]any
+
+var LockingClause = clause.Locking{Strength: "UPDATE"}

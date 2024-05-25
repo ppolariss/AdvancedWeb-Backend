@@ -14,6 +14,9 @@ type User struct {
 	Gender    string `json:"gender" gorm:"not null;type:char(5)"`
 	Phone     string `json:"phone" gorm:"not null;type:char(13)"`
 	CreatedAt MyTime `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt MyTime `json:"updated_at" gorm:"autoUpdateTime"`
+	IsPassed  bool   `json:"is_passed" gorm:"default:false"`
+	Point     int    `json:"point" gorm:"default:0"`
 }
 
 //func (user User) MarshalJSON() ([]byte, error) {

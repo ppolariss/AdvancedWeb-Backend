@@ -3,12 +3,12 @@ package models
 import "gorm.io/gorm"
 
 type Message struct {
-	ID              int    `json:"id" gorm:"primaryKey"`
-	User            *User  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	UserID          int    `json:"user_id" gorm:"not null;index"`
-	CommodityItemID int    `json:"commodity_item_id"` //如果不constraint join时要注意
-	CreateAt        MyTime `json:"create_at" gorm:"autoCreateTime"`
-	//PriceLimit   float64
+	ID        int            `json:"id" gorm:"primaryKey"`
+	User      *User          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserID    int            `json:"user_id" gorm:"not null;index"`
+	CreateAt  MyTime         `json:"create_at" gorm:"autoCreateTime"`
+	Content   string         `json:"content"`
+	DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
 }
 
 type ByCreatedAt []Message
