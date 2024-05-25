@@ -1,0 +1,42 @@
+name: Production Build
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yaml'
+
+env:
+  APP_NAME: advanced_web_backend
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Login to DockerHub
+        uses: docker/login-action@master
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # - name: Give mvnw permission
+      #   run: chmod +x mvnw
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@master
+        with:
+          context: "./backend"
+          push: true
+          file: "./backend/Dockerfile"
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest

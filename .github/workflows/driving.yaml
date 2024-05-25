@@ -2,9 +2,12 @@ name: Production Build
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'driving/**'
+      - '.github/workflows/driving.yaml'
 
 env:
-  APP_NAME: advanced_web_backend
+  APP_NAME: driving
 
 jobs:
   docker:
@@ -32,9 +35,8 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@master
         with:
-          context: "./backend"
+          context: "./driving"
           push: true
-          file: "./backend/Dockerfile"
+          file: "./driving/Dockerfile"
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APP_NAME }}:v1
