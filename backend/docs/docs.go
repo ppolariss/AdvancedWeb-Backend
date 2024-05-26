@@ -192,7 +192,7 @@ const docTemplate = `{
         },
         "/api/exams": {
             "get": {
-                "description": "Get exam by ID",
+                "description": "list my exams",
                 "consumes": [
                     "application/json"
                 ],
@@ -202,15 +202,8 @@ const docTemplate = `{
                 "tags": [
                     "Exam"
                 ],
-                "summary": "Get exam by ID",
+                "summary": "list my exams",
                 "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Exam ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "description": "Bearer和token空格拼接",
@@ -223,7 +216,10 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Exam"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Exam"
+                            }
                         }
                     },
                     "400": {
@@ -234,12 +230,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
                         "schema": {
                             "$ref": "#/definitions/common.HttpError"
                         }
@@ -314,6 +304,15 @@ const docTemplate = `{
                 ],
                 "summary": "End exam",
                 "parameters": [
+                    {
+                        "description": "json",
+                        "name": "json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/exam.EndExamRequest"
+                        }
+                    },
                     {
                         "type": "string",
                         "description": "Bearer和token空格拼接",
@@ -446,6 +445,61 @@ const docTemplate = `{
             }
         },
         "/api/exams/{id}": {
+            "get": {
+                "description": "Get exam by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Exam"
+                ],
+                "summary": "Get exam by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Exam ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Exam"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            },
             "put": {
                 "description": "Modify exam by ID",
                 "consumes": [
@@ -1415,6 +1469,14 @@ const docTemplate = `{
                 }
             }
         },
+        "exam.EndExamRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "exam.EndExamResponse": {
             "type": "object",
             "properties": {
@@ -1513,12 +1575,6 @@ const docTemplate = `{
                 "id": {
                     "description": "IsPublic    bool   ` + "`" + `json:\"is_public\"` + "`" + `",
                     "type": "integer"
-                },
-                "punishments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Punishment"
-                    }
                 },
                 "score": {
                     "type": "integer"
@@ -1649,10 +1705,14 @@ const docTemplate = `{
                 1000000000,
                 60000000000,
                 3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
                 1,
                 1000,
                 1000000,
-                1000000000
+                1000000000,
+                60000000000,
+                3600000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -1663,10 +1723,14 @@ const docTemplate = `{
                 "Second",
                 "Minute",
                 "Hour",
+                "minDuration",
+                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
-                "Second"
+                "Second",
+                "Minute",
+                "Hour"
             ]
         },
         "user.ChangePasswordRequest": {

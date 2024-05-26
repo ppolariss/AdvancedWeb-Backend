@@ -40,6 +40,9 @@ func AddPunishment(c *fiber.Ctx) (err error) {
 	if exam.UserID != tmpUser.ID {
 		return common.Forbidden("You are not the owner of this exam")
 	}
+	if exam.IsFinished() {
+		return common.Forbidden("The exam has been finished")
+	}
 	var punishment = Punishment{
 		Reason:         addPunishmentRequest.Reason,
 		Score:          addPunishmentRequest.Score,
@@ -96,7 +99,7 @@ func ListPunishments(c *fiber.Ctx) (err error) {
 	}
 	var punishments Punishments
 	err = DB.Where("exam_id = ? and type = ?", exam.ID, EXAM).Find(&punishments).Error
-	return c.JSON(exam.Punishments)
+	return c.JSON(punishments)
 }
 
 // GetPunishment @GetPunishment

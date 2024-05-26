@@ -90,6 +90,11 @@ definitions:
       score:
         type: integer
     type: object
+  exam.EndExamRequest:
+    properties:
+      id:
+        type: integer
+    type: object
   exam.EndExamResponse:
     properties:
       score:
@@ -155,10 +160,6 @@ definitions:
       id:
         description: IsPublic    bool   `json:"is_public"`
         type: integer
-      punishments:
-        items:
-          $ref: '#/definitions/models.Punishment'
-        type: array
       score:
         type: integer
       start_time:
@@ -246,10 +247,14 @@ definitions:
     - 1000000000
     - 60000000000
     - 3600000000000
+    - -9223372036854775808
+    - 9223372036854775807
     - 1
     - 1000
     - 1000000
     - 1000000000
+    - 60000000000
+    - 3600000000000
     type: integer
     x-enum-varnames:
     - minDuration
@@ -260,10 +265,14 @@ definitions:
     - Second
     - Minute
     - Hour
+    - minDuration
+    - maxDuration
     - Nanosecond
     - Microsecond
     - Millisecond
     - Second
+    - Minute
+    - Hour
   user.ChangePasswordRequest:
     properties:
       email:
@@ -406,13 +415,8 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get exam by ID
+      description: list my exams
       parameters:
-      - description: Exam ID
-        in: path
-        name: id
-        required: true
-        type: integer
       - description: Bearer和token空格拼接
         in: header
         name: Authorization
@@ -424,7 +428,9 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Exam'
+            items:
+              $ref: '#/definitions/models.Exam'
+            type: array
         "400":
           description: Bad Request
           schema:
@@ -433,11 +439,7 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/common.HttpError'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/common.HttpError'
-      summary: Get exam by ID
+      summary: list my exams
       tags:
       - Exam
   /api/exams/{id}:
@@ -474,6 +476,43 @@ paths:
           schema:
             $ref: '#/definitions/common.HttpError'
       summary: Delete exam by ID
+      tags:
+      - Exam
+    get:
+      consumes:
+      - application/json
+      description: Get exam by ID
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Exam'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get exam by ID
       tags:
       - Exam
     put:
@@ -641,6 +680,12 @@ paths:
       - application/json
       description: End exam
       parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.EndExamRequest'
       - description: Bearer和token空格拼接
         in: header
         name: Authorization

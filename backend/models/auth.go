@@ -57,6 +57,10 @@ func (user *LoginUser) CheckUserID() error {
 		if err != nil {
 			return err
 		}
+		// TODO
+		//if user.Username != newUser.Username {
+		//	return common.Unauthorized("Unauthorized")
+		//}
 		user.Username = newUser.Username
 
 		return nil

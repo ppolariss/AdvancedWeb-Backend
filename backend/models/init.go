@@ -50,11 +50,10 @@ func InitDB() (err error) {
 	}
 
 	// 迁移数据库，确保 Login 表存在
-	err = DB.AutoMigrate(&User{}, &UserJwtSecret{})
+	err = DB.AutoMigrate(&User{}, &UserJwtSecret{}, &Message{}, &Chat{}, &Exam{}, &Punishments{})
 	if err != nil {
 		return err
 	}
-	err = DB.AutoMigrate(&Message{})
 
 	return err
 }

@@ -33,7 +33,7 @@ func ListExams(ctx *fiber.Ctx) (err error) {
 }
 
 // GetExam @GetExam
-// @Router /api/exams [get]
+// @Router /api/exams/{id} [get]
 // @Summary Get exam by ID
 // @Description Get exam by ID
 // @Tags Exam
@@ -90,8 +90,8 @@ func AddExam(ctx *fiber.Ctx) (err error) {
 		UserID:      tmpUser.ID,
 		Title:       addExamRequest.Title,
 		Description: addExamRequest.Description,
-		StartTime:   addExamRequest.StartTime,
-		EndTime:     addExamRequest.EndTime,
+		StartTime:   &addExamRequest.StartTime,
+		EndTime:     &addExamRequest.EndTime,
 		Duration:    addExamRequest.EndTime.Time.Sub(addExamRequest.StartTime.Time),
 		Score:       addExamRequest.Score,
 	}
@@ -114,12 +114,19 @@ func StartExam(ctx *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
-	return DB.Create(&Exam{
+	exam := Exam{
 		UserID: tmpUser.ID,
-		StartTime: MyTime{
+		StartTime: &MyTime{
 			Time: time.Now(),
 		},
-	}).Error
+	}
+	err = DB.Omit("EndTime").Create(&exam).Error
+	if err != nil {
+		return
+	}
+	return ctx.JSON(StartExamResponse{
+		ID: exam.ID,
+	})
 }
 
 // EndExam @EndExam
@@ -129,6 +136,7 @@ func StartExam(ctx *fiber.Ctx) (err error) {
 // @Tags Exam
 // @Accept json
 // @Produce json
+// @Param json body EndExamRequest true "json"
 // @Success 200 {object} EndExamResponse
 // @Failure 400 {object} common.HttpError
 // @Failure 401 {object} common.HttpError
@@ -150,7 +158,10 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 	if exam.UserID != tmpUser.ID {
 		return common.Forbidden("You are not the owner of this exam")
 	}
-	exam.EndTime = MyTime{Time: time.Now()}
+	if exam.IsFinished() {
+		return common.Forbidden("This exam has already ended")
+	}
+	exam.EndTime = &MyTime{Time: time.Now()}
 	exam.Duration = exam.EndTime.Time.Sub(exam.StartTime.Time)
 	err = DB.Transaction(func(tx *gorm.DB) (err error) {
 		err = DB.Model(&exam).Select("EndTime", "Duration").UpdateColumns(&exam).Error
@@ -165,7 +176,7 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 		if err != nil {
 			return
 		}
-		if !user.IsPassed {
+		if user.IsPassed {
 			return
 		}
 		user.IsPassed = true

@@ -5,6 +5,16 @@ const (
 	SOCIETY
 )
 
+var PunishmentTypeMap = map[int8]string{
+	OverSpeed:      "超速",
+	IllegalParking: "违停",
+	NoBelts:        "未系安全带",
+	FlameOut:       "熄火",
+	RedLight:       "闯红灯",
+	NoLicensePlate: "无牌",
+	Unknown:        "未知",
+}
+
 const (
 	Unknown = iota
 	OverSpeed

@@ -14,7 +14,7 @@ func RegisterRoutes(routes fiber.Router) {
 	routes.Delete("/exams/:id", DeleteExam)
 
 	// exam punishment
-	routes.Get("/exams/punishments/:punishment_id", GetPunishment)
+	routes.Get("/exams/punishments/:id", GetPunishment)
 	routes.Post("/exams/:id/punishments/", AddPunishment)
 	routes.Get("/exams/:id<int>/punishments/", ListPunishments)
 	//routes.Get("/exams/:id/questions", ListQuestions)
