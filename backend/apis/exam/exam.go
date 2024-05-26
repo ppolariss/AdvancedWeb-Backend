@@ -73,7 +73,7 @@ func GetExam(c *fiber.Ctx) (err error) {
 // @Accept json
 // @Produce json
 // @Param json body AddExamRequest true "json"
-// @Success 200 {object} Exam
+// @Success 200 {object} models.Exam
 // @Failure 400 {object} common.HttpError
 // @Failure 401 {object} common.HttpError
 // @Param Authorization header string true "Bearer和token空格拼接"

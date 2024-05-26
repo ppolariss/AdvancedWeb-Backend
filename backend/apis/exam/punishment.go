@@ -17,7 +17,7 @@ import (
 // @Produce json
 // @Param id path int true "Exam ID"
 // @Param json body AddPunishmentRequest true "json"
-// @Success 200 {object} Punishment
+// @Success 200 {object} models.ExamPunishment
 // @Failure 400 {object} common.HttpError
 // @Failure 401 {object} common.HttpError
 // @Failure 403 {object} common.HttpError
@@ -43,14 +43,13 @@ func AddPunishment(c *fiber.Ctx) (err error) {
 	if exam.IsFinished() {
 		return common.Forbidden("The exam has been finished")
 	}
-	var punishment = Punishment{
+	var punishment = ExamPunishment{
 		Reason:         addPunishmentRequest.Reason,
 		Score:          addPunishmentRequest.Score,
 		PunishmentType: addPunishmentRequest.PunishmentType,
 		CreatedAt:      MyTime{Time: time.Now()},
 		UserID:         tmpUser.ID,
 		ExamID:         examID,
-		Type:           EXAM,
 	}
 	return DB.Transaction(func(tx *gorm.DB) (err error) {
 		err = tx.Model(&exam).UpdateColumn("Score", exam.Score-addPunishmentRequest.Score).Error
@@ -60,7 +59,7 @@ func AddPunishment(c *fiber.Ctx) (err error) {
 		return tx.Create(&punishment).Error
 	})
 	//if
-	//exam.Punishments = append(exam.Punishments, Punishment{
+	//exam.ExamPunishments = append(exam.ExamPunishments, ExamPunishment{
 	//	Reason: addPunishmentRequest.Reason,
 	//	Score:  addPunishmentRequest.Score,
 	//})
@@ -75,7 +74,7 @@ func AddPunishment(c *fiber.Ctx) (err error) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Exam ID"
-// @Success 200 {object} Punishments
+// @Success 200 {object} models.ExamPunishments
 // @Failure 400 {object} common.HttpError
 // @Failure 401 {object} common.HttpError
 // @Failure 403 {object} common.HttpError
@@ -97,8 +96,8 @@ func ListPunishments(c *fiber.Ctx) (err error) {
 	if exam.UserID != tmpUser.ID {
 		return common.Forbidden("You are not the owner of this exam")
 	}
-	var punishments Punishments
-	err = DB.Where("exam_id = ? and type = ?", exam.ID, EXAM).Find(&punishments).Error
+	var punishments ExamPunishments
+	err = DB.Where("exam_id = ?", exam.ID).Find(&punishments).Error
 	return c.JSON(punishments)
 }
 
@@ -109,8 +108,8 @@ func ListPunishments(c *fiber.Ctx) (err error) {
 // @Tags Exam
 // @Accept json
 // @Produce json
-// @Param id path int true "Punishment ID"
-// @Success 200 {object} Punishment
+// @Param id path int true "ExamPunishment ID"
+// @Success 200 {object} models.ExamPunishment
 // @Failure 400 {object} common.HttpError
 // @Failure 401 {object} common.HttpError
 // @Failure 403 {object} common.HttpError
@@ -124,7 +123,7 @@ func GetPunishment(c *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
-	var punishment Punishment
+	var punishment ExamPunishment
 	err = DB.Take(&punishment, punishmentID).Error
 	if err != nil {
 		return

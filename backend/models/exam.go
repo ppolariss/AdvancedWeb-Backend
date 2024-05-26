@@ -6,7 +6,6 @@ import (
 )
 
 type Exam struct {
-	//IsPublic    bool   `json:"is_public"`
 	ID          int            `json:"id" gorm:"primaryKey"`
 	Title       string         `json:"title" gorm:"default:'exam'"`
 	Description string         `json:"description" gorm:"default:'description'"`
@@ -17,7 +16,8 @@ type Exam struct {
 	UserID      int            `json:"user_id" gorm:"index:idx_exam_user,priority:1"`
 	Score       int            `json:"score" gorm:"default:100"`
 	DeletedAt   gorm.DeletedAt `json:"deleted_at" validate:"omitempty"`
-	//Punishments *Punishments   `json:"punishments"`
+	//ExamPunishments *ExamPunishments   `json:"punishments"`
+	//IsPublic    bool   `json:"is_public"`
 }
 
 type Exams []Exam

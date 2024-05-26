@@ -69,6 +69,7 @@ definitions:
   exam.AddExamRequest:
     properties:
       description:
+        maxLength: 255
         type: string
       end_time:
         $ref: '#/definitions/models.MyTime'
@@ -77,14 +78,33 @@ definitions:
       start_time:
         $ref: '#/definitions/models.MyTime'
       title:
+        maxLength: 255
         type: string
     required:
+    - end_time
     - score
+    - start_time
     type: object
   exam.AddPunishmentRequest:
     properties:
       punishment_type:
         type: integer
+      reason:
+        type: string
+      score:
+        minimum: 0
+        type: integer
+    required:
+    - score
+    type: object
+  exam.DriverPunishmentResponse:
+    properties:
+      created_at:
+        $ref: '#/definitions/models.MyTime'
+      id:
+        type: integer
+      punishment_type:
+        type: string
       reason:
         type: string
       score:
@@ -147,6 +167,23 @@ definitions:
       updated_at:
         type: string
     type: object
+  models.DriverPunishment:
+    properties:
+      createdAt:
+        $ref: '#/definitions/models.MyTime'
+      id:
+        type: integer
+      punishment_type:
+        type: integer
+      reason:
+        type: string
+      score:
+        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
   models.Exam:
     properties:
       deleted_at:
@@ -158,7 +195,6 @@ definitions:
       end_time:
         $ref: '#/definitions/models.MyTime'
       id:
-        description: IsPublic    bool   `json:"is_public"`
         type: integer
       score:
         type: integer
@@ -171,12 +207,7 @@ definitions:
       user_id:
         type: integer
     type: object
-  models.MyTime:
-    properties:
-      time.Time:
-        type: string
-    type: object
-  models.Punishment:
+  models.ExamPunishment:
     properties:
       createdAt:
         $ref: '#/definitions/models.MyTime'
@@ -192,12 +223,15 @@ definitions:
         type: string
       score:
         type: integer
-      type:
-        type: integer
       user:
         $ref: '#/definitions/models.User'
       user_id:
         type: integer
+    type: object
+  models.MyTime:
+    properties:
+      time.Time:
+        type: string
     type: object
   models.Record:
     properties:
@@ -247,14 +281,11 @@ definitions:
     - 1000000000
     - 60000000000
     - 3600000000000
-    - -9223372036854775808
-    - 9223372036854775807
     - 1
     - 1000
     - 1000000
     - 1000000000
     - 60000000000
-    - 3600000000000
     type: integer
     x-enum-varnames:
     - minDuration
@@ -265,14 +296,11 @@ definitions:
     - Second
     - Minute
     - Hour
-    - minDuration
-    - maxDuration
     - Nanosecond
     - Microsecond
     - Millisecond
     - Second
     - Minute
-    - Hour
   user.ChangePasswordRequest:
     properties:
       email:
@@ -411,6 +439,133 @@ paths:
       summary: Get chat by ID
       tags:
       - Chat
+  /api/drivers/punishments/:
+    get:
+      consumes:
+      - application/json
+      description: List driver punishments
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/exam.DriverPunishmentResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: List driver punishments
+      tags:
+      - Driver
+    post:
+      consumes:
+      - application/json
+      description: Add driver punishment
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.AddPunishmentRequest'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DriverPunishment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Add driver punishment
+      tags:
+      - Driver
+  /api/drivers/punishments/:id:
+    get:
+      consumes:
+      - application/json
+      description: Get driver punishment by ID
+      parameters:
+      - description: DriverPunishment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/exam.DriverPunishmentResponse'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get driver punishment by ID
+      tags:
+      - Driver
   /api/exams:
     get:
       consumes:
@@ -580,7 +735,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Punishment'
+              $ref: '#/definitions/models.ExamPunishment'
             type: array
         "400":
           description: Bad Request
@@ -624,7 +779,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Punishment'
+            $ref: '#/definitions/models.ExamPunishment'
         "400":
           description: Bad Request
           schema:
@@ -716,7 +871,7 @@ paths:
       - application/json
       description: Get punishment by ID
       parameters:
-      - description: Punishment ID
+      - description: ExamPunishment ID
         in: path
         name: id
         required: true
@@ -732,7 +887,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Punishment'
+            $ref: '#/definitions/models.ExamPunishment'
         "400":
           description: Bad Request
           schema:
@@ -914,133 +1069,6 @@ paths:
       summary: Register
       tags:
       - Auth
-  /api/society/{punishment_id}:
-    get:
-      consumes:
-      - application/json
-      description: Get society punishment by ID
-      parameters:
-      - description: Punishment ID
-        in: path
-        name: punishment_id
-        required: true
-        type: integer
-      - description: Bearer和token空格拼接
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Punishment'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.HttpError'
-      summary: Get society punishment by ID
-      tags:
-      - Society
-  /api/society/punishments/:
-    get:
-      consumes:
-      - application/json
-      description: List society punishments
-      parameters:
-      - description: Bearer和token空格拼接
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Punishment'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.HttpError'
-      summary: List society punishments
-      tags:
-      - Society
-    post:
-      consumes:
-      - application/json
-      description: Add society punishment
-      parameters:
-      - description: json
-        in: body
-        name: json
-        required: true
-        schema:
-          $ref: '#/definitions/exam.AddPunishmentRequest'
-      - description: Bearer和token空格拼接
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Punishment'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/common.HttpError'
-      summary: Add society punishment
-      tags:
-      - Society
   /api/users:
     put:
       consumes:

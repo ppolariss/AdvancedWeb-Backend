@@ -190,6 +190,197 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/drivers/punishments/": {
+            "get": {
+                "description": "List driver punishments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "List driver punishments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/exam.DriverPunishmentResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Add driver punishment",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "Add driver punishment",
+                "parameters": [
+                    {
+                        "description": "json",
+                        "name": "json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/exam.AddPunishmentRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DriverPunishment"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/drivers/punishments/:id": {
+            "get": {
+                "description": "Get driver punishment by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "Get driver punishment by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "DriverPunishment ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/exam.DriverPunishmentResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/exams": {
             "get": {
                 "description": "list my exams",
@@ -422,7 +613,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Punishment ID",
+                        "description": "ExamPunishment ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -439,7 +630,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Punishment"
+                            "$ref": "#/definitions/models.ExamPunishment"
                         }
                     },
                     "400": {
@@ -651,7 +842,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Punishment"
+                                "$ref": "#/definitions/models.ExamPunishment"
                             }
                         }
                     },
@@ -716,7 +907,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Punishment"
+                            "$ref": "#/definitions/models.ExamPunishment"
                         }
                     },
                     "400": {
@@ -941,197 +1132,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/society/punishments/": {
-            "get": {
-                "description": "List society punishments",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Society"
-                ],
-                "summary": "List society punishments",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer和token空格拼接",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Punishment"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "description": "Add society punishment",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Society"
-                ],
-                "summary": "Add society punishment",
-                "parameters": [
-                    {
-                        "description": "json",
-                        "name": "json",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/exam.AddPunishmentRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer和token空格拼接",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Punishment"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/society/{punishment_id}": {
-            "get": {
-                "description": "Get society punishment by ID",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Society"
-                ],
-                "summary": "Get society punishment by ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Punishment ID",
-                        "name": "punishment_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer和token空格拼接",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Punishment"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/common.HttpError"
                         }
@@ -1437,11 +1437,14 @@ const docTemplate = `{
         "exam.AddExamRequest": {
             "type": "object",
             "required": [
-                "score"
+                "end_time",
+                "score",
+                "start_time"
             ],
             "properties": {
                 "description": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 },
                 "end_time": {
                     "$ref": "#/definitions/models.MyTime"
@@ -1453,15 +1456,40 @@ const docTemplate = `{
                     "$ref": "#/definitions/models.MyTime"
                 },
                 "title": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 255
                 }
             }
         },
         "exam.AddPunishmentRequest": {
             "type": "object",
+            "required": [
+                "score"
+            ],
             "properties": {
                 "punishment_type": {
                     "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer",
+                    "minimum": 0
+                }
+            }
+        },
+        "exam.DriverPunishmentResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "$ref": "#/definitions/models.MyTime"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "punishment_type": {
+                    "type": "string"
                 },
                 "reason": {
                     "type": "string"
@@ -1559,6 +1587,32 @@ const docTemplate = `{
                 }
             }
         },
+        "models.DriverPunishment": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "$ref": "#/definitions/models.MyTime"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "punishment_type": {
+                    "type": "integer"
+                },
+                "reason": {
+                    "type": "string"
+                },
+                "score": {
+                    "type": "integer"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.Exam": {
             "type": "object",
             "properties": {
@@ -1575,7 +1629,6 @@ const docTemplate = `{
                     "$ref": "#/definitions/models.MyTime"
                 },
                 "id": {
-                    "description": "IsPublic    bool   ` + "`" + `json:\"is_public\"` + "`" + `",
                     "type": "integer"
                 },
                 "score": {
@@ -1595,15 +1648,7 @@ const docTemplate = `{
                 }
             }
         },
-        "models.MyTime": {
-            "type": "object",
-            "properties": {
-                "time.Time": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Punishment": {
+        "models.ExamPunishment": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -1627,14 +1672,19 @@ const docTemplate = `{
                 "score": {
                     "type": "integer"
                 },
-                "type": {
-                    "type": "integer"
-                },
                 "user": {
                     "$ref": "#/definitions/models.User"
                 },
                 "user_id": {
                     "type": "integer"
+                }
+            }
+        },
+        "models.MyTime": {
+            "type": "object",
+            "properties": {
+                "time.Time": {
+                    "type": "string"
                 }
             }
         },
@@ -1707,14 +1757,11 @@ const docTemplate = `{
                 1000000000,
                 60000000000,
                 3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
                 1000000000,
-                60000000000,
-                3600000000000
+                60000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -1725,14 +1772,11 @@ const docTemplate = `{
                 "Second",
                 "Minute",
                 "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
                 "Second",
-                "Minute",
-                "Hour"
+                "Minute"
             ]
         },
         "user.ChangePasswordRequest": {

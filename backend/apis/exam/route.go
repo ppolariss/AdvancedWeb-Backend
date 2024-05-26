@@ -30,7 +30,7 @@ func RegisterRoutes(routes fiber.Router) {
 	//routes.Put("/answers/:id", ModifyAnswer)
 	//routes.Delete("/answers/:id", DeleteAnswer)
 
-	routes.Get("/society/:id", GetSocietyPunishment)
-	routes.Post("/society/punishments/", AddSocietyPunishment)
-	routes.Get("/society/punishments/", ListSocietyPunishments)
+	routes.Get("/drivers/punishments/:id", GetDriverPunishment)
+	routes.Post("/drivers/punishments/", AddDriverPunishment)
+	routes.Get("/drivers/punishments/", ListDriverPunishments)
 }
