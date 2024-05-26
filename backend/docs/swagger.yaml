@@ -442,6 +442,48 @@ paths:
       summary: list my exams
       tags:
       - Exam
+  /api/exams/:
+    put:
+      consumes:
+      - application/json
+      description: Modify exam by ID
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.ModifyExamRequest'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Modify exam by ID
+      tags:
+      - Exam
   /api/exams/{id}:
     delete:
       consumes:
@@ -513,47 +555,6 @@ paths:
           schema:
             $ref: '#/definitions/common.HttpError'
       summary: Get exam by ID
-      tags:
-      - Exam
-    put:
-      consumes:
-      - application/json
-      description: Modify exam by ID
-      parameters:
-      - description: Exam ID
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: json
-        in: body
-        name: json
-        required: true
-        schema:
-          $ref: '#/definitions/exam.ModifyExamRequest'
-      - description: Bearer和token空格拼接
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/common.HttpError'
-      summary: Modify exam by ID
       tags:
       - Exam
   /api/exams/{id}/punishments/:

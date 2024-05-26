@@ -223,7 +223,7 @@ func DeleteExam(ctx *fiber.Ctx) error {
 }
 
 // ModifyExam @ModifyExam
-// @Router /api/exams/{id} [put]
+// @Router /api/exams/ [put]
 // @Summary Modify exam by ID
 // @Description Modify exam by ID
 // @Tags Exam

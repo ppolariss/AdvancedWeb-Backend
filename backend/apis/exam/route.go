@@ -10,7 +10,7 @@ func RegisterRoutes(routes fiber.Router) {
 	routes.Post("/exams/end", EndExam)
 
 	routes.Post("/exams/add", AddExam)
-	routes.Put("/exams/:id", ModifyExam)
+	routes.Put("/exams", ModifyExam)
 	routes.Delete("/exams/:id", DeleteExam)
 
 	// exam punishment
