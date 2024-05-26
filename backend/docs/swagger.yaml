@@ -66,10 +66,150 @@ definitions:
       message:
         type: string
     type: object
+  exam.AddExamRequest:
+    properties:
+      description:
+        type: string
+      end_time:
+        $ref: '#/definitions/models.MyTime'
+      score:
+        type: integer
+      start_time:
+        $ref: '#/definitions/models.MyTime'
+      title:
+        type: string
+    required:
+    - score
+    type: object
+  exam.AddPunishmentRequest:
+    properties:
+      punishment_type:
+        type: integer
+      reason:
+        type: string
+      score:
+        type: integer
+    type: object
+  exam.EndExamResponse:
+    properties:
+      score:
+        type: integer
+    type: object
+  exam.ModifyExamRequest:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  exam.StartExamResponse:
+    properties:
+      id:
+        type: integer
+    type: object
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  message.AIResponse:
+    properties:
+      output:
+        type: string
+      stage:
+        type: string
+      status:
+        description: 1 for output, 0 for end, -1 for error
+        type: integer
+      status_code:
+        type: integer
+    type: object
+  models.Chat:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      records:
+        items:
+          $ref: '#/definitions/models.Record'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  models.Exam:
+    properties:
+      deleted_at:
+        $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      duration:
+        $ref: '#/definitions/time.Duration'
+      end_time:
+        $ref: '#/definitions/models.MyTime'
+      id:
+        description: IsPublic    bool   `json:"is_public"`
+        type: integer
+      punishments:
+        items:
+          $ref: '#/definitions/models.Punishment'
+        type: array
+      score:
+        type: integer
+      start_time:
+        $ref: '#/definitions/models.MyTime'
+      title:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
   models.MyTime:
     properties:
       time.Time:
         type: string
+    type: object
+  models.Punishment:
+    properties:
+      createdAt:
+        $ref: '#/definitions/models.MyTime'
+      exam:
+        $ref: '#/definitions/models.Exam'
+      exam_id:
+        type: integer
+      id:
+        type: integer
+      punishment_type:
+        type: integer
+      reason:
+        type: string
+      score:
+        type: integer
+      type:
+        type: integer
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: integer
+    type: object
+  models.Record:
+    properties:
+      chat_id:
+        type: integer
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      user_id:
+        type: integer
     type: object
   models.User:
     properties:
@@ -83,13 +223,47 @@ definitions:
         type: string
       id:
         type: integer
+      is_passed:
+        type: boolean
       password:
         type: string
       phone:
         type: string
+      point:
+        type: integer
+      updated_at:
+        $ref: '#/definitions/models.MyTime'
       username:
         type: string
     type: object
+  time.Duration:
+    enum:
+    - -9223372036854775808
+    - 9223372036854775807
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    - 60000000000
+    - 3600000000000
+    - 1
+    - 1000
+    - 1000000
+    - 1000000000
+    type: integer
+    x-enum-varnames:
+    - minDuration
+    - maxDuration
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
+    - Minute
+    - Hour
+    - Nanosecond
+    - Microsecond
+    - Millisecond
+    - Second
   user.ChangePasswordRequest:
     properties:
       email:
@@ -116,6 +290,447 @@ info:
   title: Advanced Web Backend
   version: 1.0.0
 paths:
+  /api/chats:
+    get:
+      consumes:
+      - application/json
+      description: list my chats
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Chat'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: list my chats
+      tags:
+      - Chat
+  /api/chats/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete chat by ID
+      parameters:
+      - description: Chat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Delete chat by ID
+      tags:
+      - Chat
+    get:
+      consumes:
+      - application/json
+      description: Get chat by ID
+      parameters:
+      - description: Chat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Chat'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get chat by ID
+      tags:
+      - Chat
+  /api/exams:
+    get:
+      consumes:
+      - application/json
+      description: Get exam by ID
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Exam'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get exam by ID
+      tags:
+      - Exam
+  /api/exams/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete exam by ID
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Delete exam by ID
+      tags:
+      - Exam
+    put:
+      consumes:
+      - application/json
+      description: Modify exam by ID
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.ModifyExamRequest'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Modify exam by ID
+      tags:
+      - Exam
+  /api/exams/{id}/punishments/:
+    get:
+      consumes:
+      - application/json
+      description: List punishments of exam
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Punishment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: List punishments of exam
+      tags:
+      - Exam
+    post:
+      consumes:
+      - application/json
+      description: Add punishment to exam
+      parameters:
+      - description: Exam ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.AddPunishmentRequest'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Punishment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Add punishment to exam
+      tags:
+      - Exam
+  /api/exams/add:
+    post:
+      consumes:
+      - application/json
+      description: Add exam once
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.AddExamRequest'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Exam'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Add exam once
+      tags:
+      - Exam
+  /api/exams/end:
+    post:
+      consumes:
+      - application/json
+      description: End exam
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/exam.EndExamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: End exam
+      tags:
+      - Exam
+  /api/exams/punishments/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get punishment by ID
+      parameters:
+      - description: Punishment ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Punishment'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get punishment by ID
+      tags:
+      - Exam
+  /api/exams/start:
+    post:
+      consumes:
+      - application/json
+      description: Start exam
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/exam.StartExamResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Start exam
+      tags:
+      - Exam
   /api/login:
     post:
       consumes:
@@ -154,6 +769,77 @@ paths:
       summary: Login
       tags:
       - Auth
+  /api/records:
+    get:
+      consumes:
+      - application/json
+      description: list my records
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Record'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: list my records
+      tags:
+      - Record
+  /api/records/{id}:
+    get:
+      consumes:
+      - application/json
+      description: list records by chat ID
+      parameters:
+      - description: Chat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Record'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: list records by chat ID
+      tags:
+      - Record
   /api/register:
     post:
       consumes:
@@ -182,6 +868,133 @@ paths:
       summary: Register
       tags:
       - Auth
+  /api/society/{punishment_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get society punishment by ID
+      parameters:
+      - description: Punishment ID
+        in: path
+        name: punishment_id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Punishment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Get society punishment by ID
+      tags:
+      - Society
+  /api/society/punishments/:
+    get:
+      consumes:
+      - application/json
+      description: List society punishments
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Punishment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: List society punishments
+      tags:
+      - Society
+    post:
+      consumes:
+      - application/json
+      description: Add society punishment
+      parameters:
+      - description: json
+        in: body
+        name: json
+        required: true
+        schema:
+          $ref: '#/definitions/exam.AddPunishmentRequest'
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Punishment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Add society punishment
+      tags:
+      - Society
   /api/users:
     put:
       consumes:
@@ -274,4 +1087,41 @@ paths:
       summary: Change password
       tags:
       - User
+  /api/ws/moss:
+    get:
+      consumes:
+      - application/json
+      description: Moss Chat
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/message.AIResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: Moss Chat
+      tags:
+      - Chat
 swagger: "2.0"

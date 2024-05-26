@@ -8,6 +8,17 @@ import (
 	"time"
 )
 
+// ListExams @ListExams
+// @Router /api/exams [get]
+// @Summary list my exams
+// @Description list my exams
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Success 200 {object} Exams
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func ListExams(ctx *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(ctx)
 	if err != nil {
@@ -21,6 +32,19 @@ func ListExams(ctx *fiber.Ctx) (err error) {
 	return ctx.JSON(exams)
 }
 
+// GetExam @GetExam
+// @Router /api/exams [get]
+// @Summary Get exam by ID
+// @Description Get exam by ID
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param id path int true "Exam ID"
+// @Success 200 {object} Exam
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func GetExam(c *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(c)
 	if err != nil {
@@ -41,6 +65,18 @@ func GetExam(c *fiber.Ctx) (err error) {
 	return c.JSON(exam)
 }
 
+// AddExam @AddExam
+// @Router /api/exams/add [post]
+// @Summary Add exam once
+// @Description Add exam once
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param json body AddExamRequest true "json"
+// @Success 200 {object} Exam
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Param Authorization header string true "Bearer和token空格拼接"
 func AddExam(ctx *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(ctx)
 	if err != nil {
@@ -62,6 +98,17 @@ func AddExam(ctx *fiber.Ctx) (err error) {
 	return DB.Create(&exam).Error
 }
 
+// StartExam @StartExam
+// @Router /api/exams/start [post]
+// @Summary Start exam
+// @Description Start exam
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Success 200 {object} StartExamResponse
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Param Authorization header string true "Bearer和token空格拼接"
 func StartExam(ctx *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(ctx)
 	if err != nil {
@@ -75,6 +122,17 @@ func StartExam(ctx *fiber.Ctx) (err error) {
 	}).Error
 }
 
+// EndExam @EndExam
+// @Router /api/exams/end [post]
+// @Summary End exam
+// @Description End exam
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Success 200 {object} EndExamResponse
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Param Authorization header string true "Bearer和token空格拼接"
 func EndExam(ctx *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(ctx)
 	if err != nil {
@@ -120,6 +178,19 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 	return ctx.JSON(endExamResponse)
 }
 
+// DeleteExam @DeleteExam
+// @Router /api/exams/{id} [delete]
+// @Summary Delete exam by ID
+// @Description Delete exam by ID
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param id path int true "Exam ID"
+// @Success 200
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func DeleteExam(ctx *fiber.Ctx) error {
 	tmpUser, err := GetGeneralUser(ctx)
 	if err != nil {
@@ -140,6 +211,20 @@ func DeleteExam(ctx *fiber.Ctx) error {
 	return DB.Delete(&exam).Error
 }
 
+// ModifyExam @ModifyExam
+// @Router /api/exams/{id} [put]
+// @Summary Modify exam by ID
+// @Description Modify exam by ID
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param id path int true "Exam ID"
+// @Param json body ModifyExamRequest true "json"
+// @Success 200
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func ModifyExam(c *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(c)
 	if err != nil {

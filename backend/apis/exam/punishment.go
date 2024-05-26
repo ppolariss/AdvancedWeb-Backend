@@ -8,6 +8,20 @@ import (
 	"time"
 )
 
+// AddPunishment @AddPunishment
+// @Router /api/exams/{id}/punishments/ [post]
+// @Summary Add punishment to exam
+// @Description Add punishment to exam
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param id path int true "Exam ID"
+// @Param json body AddPunishmentRequest true "json"
+// @Success 200 {object} Punishment
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @Param Authorization header string true "Bearer和token空格拼接"
 func AddPunishment(c *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(c)
 	if err != nil {
@@ -50,6 +64,19 @@ func AddPunishment(c *fiber.Ctx) (err error) {
 	// DB.Save(&exam).Error
 }
 
+// ListPunishments @ListPunishments
+// @Router /api/exams/{id}/punishments/ [get]
+// @Summary List punishments of exam
+// @Description List punishments of exam
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param id path int true "Exam ID"
+// @Success 200 {object} Punishments
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @Param Authorization header string true "Bearer和token空格拼接"
 func ListPunishments(c *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(c)
 	if err != nil {
@@ -72,6 +99,19 @@ func ListPunishments(c *fiber.Ctx) (err error) {
 	return c.JSON(exam.Punishments)
 }
 
+// GetPunishment @GetPunishment
+// @Router /api/exams/punishments/{id} [get]
+// @Summary Get punishment by ID
+// @Description Get punishment by ID
+// @Tags Exam
+// @Accept json
+// @Produce json
+// @Param id path int true "Punishment ID"
+// @Success 200 {object} Punishment
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @Param Authorization header string true "Bearer和token空格拼接"
 func GetPunishment(c *fiber.Ctx) (err error) {
 	tmpUser, err := GetGeneralUser(c)
 	if err != nil {

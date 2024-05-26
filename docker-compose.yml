@@ -49,3 +49,5 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+    volumes:
+      - /home/solaris/Desktop/AdvancedWeb-Backend/assets:/usr/share/nginx/html/assets

@@ -17,6 +17,20 @@ import (
 	"time"
 )
 
+// GetChat @GetChat
+// @Router /api/chats/{id} [get]
+// @Summary Get chat by ID
+// @Description Get chat by ID
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param id path int true "Chat ID"
+// @Success 200 {object} Chat
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @Failure 404 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func GetChat(c *fiber.Ctx) (err error) {
 	_, err = GetGeneralUser(c)
 	if err != nil {
@@ -34,6 +48,17 @@ func GetChat(c *fiber.Ctx) (err error) {
 	return c.JSON(chat)
 }
 
+// ListChats @ListChats
+// @Router /api/chats [get]
+// @Summary list my chats
+// @Description list my chats
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Success 200 {object} Chats
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func ListChats(c *fiber.Ctx) (err error) {
 	_, err = GetGeneralUser(c)
 	if err != nil {
@@ -47,6 +72,20 @@ func ListChats(c *fiber.Ctx) (err error) {
 	return c.JSON(chats)
 }
 
+// DeleteChat @DeleteChat
+// @Router /api/chats/{id} [delete]
+// @Summary Delete chat by ID
+// @Description Delete chat by ID
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Param id path int true "Chat ID"
+// @Success 204 {object} nil
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @Failure 404 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func DeleteChat(c *fiber.Ctx) (err error) {
 	_, err = GetGeneralUser(c)
 	if err != nil {
@@ -63,6 +102,19 @@ func DeleteChat(c *fiber.Ctx) (err error) {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
+// ListRecords @ListRecords
+// @Router /api/records/{id} [get]
+// @Summary list records by chat ID
+// @Description list records by chat ID
+// @Tags Record
+// @Accept json
+// @Produce json
+// @Param id path int true "Chat ID"
+// @Success 200 {object} Records
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func ListRecords(c *fiber.Ctx) (err error) {
 	// I don't want to do Authorization here
 	_, err = GetGeneralUser(c)
@@ -88,6 +140,17 @@ func ListRecords(c *fiber.Ctx) (err error) {
 	return c.JSON(records)
 }
 
+// ListMyRecords @ListMyRecords
+// @Router /api/records [get]
+// @Summary list my records
+// @Description list my records
+// @Tags Record
+// @Accept json
+// @Produce json
+// @Success 200 {object} Records
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func ListMyRecords(c *fiber.Ctx) (err error) {
 	user, err := GetGeneralUser(c)
 	if err != nil {
@@ -117,6 +180,19 @@ func ListMyRecords(c *fiber.Ctx) (err error) {
 //
 //}
 
+// MossChat @MossChat
+// @Router /api/ws/moss [get]
+// @Summary Moss Chat
+// @Description Moss Chat
+// @Tags Chat
+// @Accept json
+// @Produce json
+// @Success 200 {object} AIResponse
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
+// @Failure 404 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func MossChat(c *websocket.Conn) {
 	var err error
 	defer func() {
