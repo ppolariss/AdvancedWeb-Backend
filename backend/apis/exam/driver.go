@@ -70,7 +70,7 @@ func AddDriverPunishment(c *fiber.Ctx) (err error) {
 	}
 	err = DB.Transaction(func(tx *gorm.DB) (err error) {
 		var user User
-		err = tx.Take(&user, tmpUser.ID).Error
+		err = tx.Clauses(LockingClause).Take(&user, tmpUser.ID).Error
 		if err != nil {
 			return
 		}
