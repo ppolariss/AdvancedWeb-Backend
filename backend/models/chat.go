@@ -10,7 +10,7 @@ type Chat struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index:idx_chat_user_deleted,priority:2"`
-	Records   Records        `json:"records,omitempty"`
+	//Records   Records        `json:"records,omitempty"`
 	//Count             int            `json:"count"` // Record 条数
 	//MaxLengthExceeded bool           `json:"max_length_exceeded"`
 }
@@ -24,6 +24,10 @@ type Record struct {
 	UserID    int            `json:"user_id" gorm:"index:idx_chat_user_deleted,priority:1"`
 	Name      string         `json:"name"`
 	ChatID    int            `json:"chat_id" gorm:"index:idx_record_chat_deleted,priority:1"`
+	RoomID    string         `json:"room_id" gorm:"index:idx_room_id,priority:1"`
+	Type      string         `json:"type"`
+	ToID      int            `json:"to_id" gorm:"index:idx_to_id,priority:1"`
+	Message   string
 	//Duration           float64        `json:"duration"` // 处理时间，单位 s
 	//Request            string         `json:"request"`
 	//Response           string         `json:"response"`

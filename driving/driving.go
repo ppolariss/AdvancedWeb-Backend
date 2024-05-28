@@ -34,6 +34,7 @@ type Data struct {
 	RoomID   string   `json:"roomID"`
 	Model    string   `json:"model"`
 	Colour   string   `json:"colour"`
+	UserID   int      `json:"user_id"`
 }
 
 //type Socket struct {
@@ -111,6 +112,9 @@ func socketServer() (err error) {
 		client := clients[0].(*socket.Socket)
 		id := client.Id()
 		var roomID string
+		var userID int
+		//var chatID int
+
 		fmt.Println("Info: client" + id + " connected")
 
 		//io.Emit()
@@ -186,9 +190,12 @@ func socketServer() (err error) {
 			}
 			data.SocketID = string(id)
 			roomID = data.RoomID
+			userID = data.UserID
 			var room = socket.Room(data.RoomID)
 			fmt.Println("Info: client" + data.SocketID + " joined room " + data.RoomID)
-			globalRooms[roomID] = make([]string, 0)
+			if len(globalRooms[roomID]) == 0 {
+				globalRooms[roomID] = make([]string, 0)
+			}
 			globalRooms[roomID] = append(globalRooms[roomID], string(id))
 			client.Join(room)
 			// for _, i := range client.Rooms().Keys() {
@@ -226,6 +233,7 @@ func socketServer() (err error) {
 				return
 			}
 			data.SocketID = string(id)
+			data.UserID = oriData.UserID
 			data.Colour = oriData.Colour
 			data.Model = oriData.Model
 			data.RoomID = oriData.RoomID
@@ -267,6 +275,22 @@ func socketServer() (err error) {
 				fmt.Println(err)
 				return
 			}
+			//if chatID == 0 {
+			//chatID = AddChat(AddChatRequest{
+			//	UserID: userID,
+			//	RoomID: roomID,
+			//})
+			//}
+
+			go AddRecord(AddRecordRequest{
+				UserID:    userID,
+				RoomID:    roomID,
+				Type:      chat.Type,
+				ToID:      0,
+				Message:   chat.Message,
+				CreatedAt: time.Now(),
+			})
+
 		})
 	})
 	if err != nil {

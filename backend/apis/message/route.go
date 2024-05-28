@@ -7,6 +7,7 @@ import (
 
 func RegisterRoutesWithoutAuthorization(routes fiber.Router) {
 	routes.Get("/ws/chat", websocket.New(MossChat))
+	routes.Post("/records", AddRecords)
 }
 
 func RegisterRoutes(routes fiber.Router) {
@@ -17,9 +18,12 @@ func RegisterRoutes(routes fiber.Router) {
 	//routes.Put("/chats/:id", ModifyChat)
 	routes.Delete("/chats/:id", DeleteChat)
 
+	// record of chat
+	routes.Get("/chats/:id/records", ListChatRecords)
+	routes.Get("/chats/:id/records/me", ListMyChatRecords)
+
 	// record
-	routes.Get("/chats/:id/records", ListRecords)
-	routes.Get("/chats/:id/records/me", ListMyRecords)
+	routes.Get("records", ListMyRecords)
 	//routes.Post("/ws/chats/:id/infer", websocket.New(Infer))
 	//routes.Post("/chats/:id/records", AddRecord)
 	//routes.Post("/chats/:id/messages", AddMessage)

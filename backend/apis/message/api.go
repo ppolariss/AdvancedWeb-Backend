@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/opentreehole/go-common"
 	"net/http"
 	"src/config"
 
@@ -102,7 +103,7 @@ func DeleteChat(c *fiber.Ctx) (err error) {
 	return c.SendStatus(fiber.StatusNoContent)
 }
 
-// ListRecords @ListRecords
+// ListChatRecords @ListChatRecords
 // @Router /api/records/{id} [get]
 // @Summary list records by chat ID
 // @Description list records by chat ID
@@ -115,7 +116,7 @@ func DeleteChat(c *fiber.Ctx) (err error) {
 // @Failure 401 {object} common.HttpError
 // @Failure 403 {object} common.HttpError
 // @param Authorization header string true "Bearer和token空格拼接"
-func ListRecords(c *fiber.Ctx) (err error) {
+func ListChatRecords(c *fiber.Ctx) (err error) {
 	// I don't want to do Authorization here
 	_, err = GetGeneralUser(c)
 	if err != nil {
@@ -140,7 +141,7 @@ func ListRecords(c *fiber.Ctx) (err error) {
 	return c.JSON(records)
 }
 
-// ListMyRecords @ListMyRecords
+// ListMyChatRecords @ListMyChatRecords
 // @Router /api/records [get]
 // @Summary list my records
 // @Description list my records
@@ -151,7 +152,7 @@ func ListRecords(c *fiber.Ctx) (err error) {
 // @Failure 400 {object} common.HttpError
 // @Failure 401 {object} common.HttpError
 // @param Authorization header string true "Bearer和token空格拼接"
-func ListMyRecords(c *fiber.Ctx) (err error) {
+func ListMyChatRecords(c *fiber.Ctx) (err error) {
 	user, err := GetGeneralUser(c)
 	if err != nil {
 		return err
@@ -162,6 +163,44 @@ func ListMyRecords(c *fiber.Ctx) (err error) {
 		return
 	}
 	return c.JSON(records)
+}
+
+// AddRecords @AddRecords
+// private
+func AddRecords(c *fiber.Ctx) (err error) {
+	var addRecordsRequest AddRecordsRequest
+	if err = c.BodyParser(&addRecordsRequest); err != nil {
+		return common.BadRequest("Invalid request body")
+	}
+	record := Record{
+		CreatedAt: addRecordsRequest.CreatedAt,
+		UserID:    addRecordsRequest.UserID,
+		RoomID:    addRecordsRequest.RoomID,
+		Type:      addRecordsRequest.Type,
+		ToID:      addRecordsRequest.ToID,
+		Message:   addRecordsRequest.Message,
+	}
+	return DB.Create(&record).Error
+}
+
+// ListMyRecords @ListMyRecords
+// @Router 
+func ListMyRecords(c *fiber.Ctx) (err error) {
+	user, err := GetGeneralUser(c)
+	if err != nil {
+		return err
+	}
+	var records Records
+	err = DB.Find(&records, "user_id = ?", user.ID).Error
+	if err != nil {
+		return
+	}
+	var toRecords Records
+	err = DB.Find(&toRecords, "to_id = ?", user.ID).Error
+	if err != nil {
+		return
+	}
+	return c.JSON(append(records, toRecords...))
 }
 
 //func Infer(c *websocket.Conn) (err error) {
