@@ -1,0 +1,44 @@
+package hall
+
+import (
+	"fmt"
+	"github.com/zishang520/socket.io/socket"
+	. "src/model"
+	"strconv"
+)
+
+func Hall(io *socket.Server) (err error) {
+	err = io.Of("/hall", nil).On("connection", func(clients ...any) {
+		client := clients[0].(*socket.Socket)
+		err = client.Emit("sendRooms", map[string]interface{}{
+			"rooms": GlobalRooms,
+		})
+		if err != nil {
+			fmt.Println("Error in sendRooms", err)
+		}
+		err = client.On("createRooms", func(_ ...any) {
+			//for _, data := range roomsData {
+			//	if data != nil {
+			//		var jsonData []byte
+			//		jsonData, err = json.Marshal(data)
+			//		if err != nil {
+			//			return
+			//		}
+			//		room := string(jsonData)
+			//		if len(globalRooms[room]) == 0 {
+			//			fmt.Println("Info: room " + room + " created")
+			//			globalRooms[room] = make([]string, 0)
+			//		}
+			//	}
+			//}
+			GlobalRooms["room"+strconv.Itoa(len(GlobalRooms)+1)] = make([]string, 0)
+			err = client.Emit("sendRooms", map[string]interface{}{
+				"rooms": GlobalRooms,
+			})
+		})
+		if err != nil {
+			fmt.Println("Error in createRooms", err)
+		}
+	})
+	return
+}

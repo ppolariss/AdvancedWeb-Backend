@@ -6,6 +6,9 @@ Advanced Web Backend
 ```
 cd backend
 go run main.go
+
+cd driving
+go run .
 ```
 
 2. 
