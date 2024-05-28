@@ -63,7 +63,7 @@ func socketServer() (err error) {
 		Origin:      "*",
 		Credentials: true,
 	})
-	globalRooms := make(map[string][]string) 
+	globalRooms := make(map[string][]string)
 
 	io := socket.NewServer(httpServer, c)
 	err = io.Of("/hall", nil).On("connection", func(clients ...any) {
@@ -85,7 +85,6 @@ func socketServer() (err error) {
 					room := string(jsonData)
 					if len(globalRooms[room]) == 0 {
 						fmt.Println("Info: room " + room + " created")
-					} else {
 						globalRooms[room] = make([]string, 0)
 					}
 				}
