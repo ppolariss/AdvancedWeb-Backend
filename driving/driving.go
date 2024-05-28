@@ -53,8 +53,41 @@ func socketServer() (err error) {
 		Origin:      "*",
 		Credentials: true,
 	})
+	var globalRooms map[string][]string
+
 	io := socket.NewServer(httpServer, c)
-	err = io.On("connection", func(clients ...any) {
+	err = io.Of("/hall", nil).On("connection", func(clients ...any) {
+		client := clients[0].(*socket.Socket)
+		err = client.Emit("sendRooms", map[string]interface{}{
+			"roomData": globalRooms,
+		})
+		if err != nil {
+			fmt.Println("Error in sendRooms", err)
+		}
+		err = client.On("createRooms", func(roomsData ...any) {
+			for _, data := range roomsData {
+				if data != nil {
+					var jsonData []byte
+					jsonData, err = json.Marshal(data)
+					if err != nil {
+						return
+					}
+					room := string(jsonData)
+					globalRooms[room] = make([]string, 0)
+				}
+			}
+			err = client.Emit("sendRooms", map[string]interface{}{
+				"roomData": globalRooms,
+			})
+		})
+		if err != nil {
+			fmt.Println("Error in createRooms", err)
+		}
+	})
+	if err != nil {
+		return
+	}
+	err = io.Of("/room", nil).On("connection", func(clients ...any) {
 		// only one client in this function
 
 		for i, client := range clients {
@@ -142,6 +175,8 @@ func socketServer() (err error) {
 			roomID = data.RoomID
 			var room = socket.Room(data.RoomID)
 			fmt.Println("Info: client" + data.SocketID + " joined room " + data.RoomID)
+			globalRooms[roomID] = make([]string, 0)
+			globalRooms[roomID] = append(globalRooms[roomID], string(id))
 			client.Join(room)
 			// for _, i := range client.Rooms().Keys() {
 			// 	fmt.Println(i)
