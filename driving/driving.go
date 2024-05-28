@@ -59,7 +59,7 @@ func socketServer() (err error) {
 
 		for i, client := range clients {
 			if client != nil && i != 0 {
-				fmt.Println("client" + client.(*socket.Socket).Id() + " connected, exceed 1")
+				fmt.Println("Error: client" + client.(*socket.Socket).Id() + " connected, exceed 1")
 				return
 				//fmt.Println(i, client.(*socket.Socket).Id())
 			}
@@ -67,7 +67,7 @@ func socketServer() (err error) {
 		client := clients[0].(*socket.Socket)
 		id := client.Id()
 		var roomID string
-		fmt.Println("client" + id + " connected")
+		fmt.Println("Info: client" + id + " connected")
 
 		//io.Emit()
 		err = client.Emit("online", map[string]interface{}{
@@ -78,7 +78,7 @@ func socketServer() (err error) {
 		}
 
 		err = client.On("disconnect", func(clients ...any) {
-			fmt.Println("client" + id + " disconnected")
+			fmt.Println("Info: client" + id + " disconnected")
 			//io.Emit("offline", map[string]interface{}{
 			//	"socketid": id,
 			//})
@@ -105,7 +105,7 @@ func socketServer() (err error) {
 
 		})
 		err = client.On("disconnection", func(clients ...any) {
-			fmt.Println("client" + id + " disconnected")
+			fmt.Println("Info: client" + id + " disconnection")
 			if roomID == "" {
 				return
 			}
@@ -113,16 +113,16 @@ func socketServer() (err error) {
 				"id": id,
 			})
 		})
-		
+
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("Error:", err)
 			return
 		}
 
 		err = client.On("init", func(requestData ...any) {
 			for i, _ := range requestData {
 				if i != 0 {
-					fmt.Println("client" + id + " sent data")
+					fmt.Println("Error: client" + id + " init, exceed 1")
 					return
 				}
 			}
@@ -140,23 +140,23 @@ func socketServer() (err error) {
 			data.SocketID = string(id)
 			roomID = data.RoomID
 			var room = socket.Room(data.RoomID)
-			fmt.Println("client" + data.SocketID + " joined room " + data.RoomID)
+			fmt.Println("Info: client" + data.SocketID + " joined room " + data.RoomID)
 			client.Join(room)
-			for _, i := range client.Rooms().Keys() {
-				fmt.Println(i)
-			}
+			// for _, i := range client.Rooms().Keys() {
+			// 	fmt.Println(i)
+			// }
 			client.SetData(data)
 		})
 
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("Error:", err)
 			return
 		}
 
 		err = client.On("update", func(requestData ...any) {
 			for i, _ := range requestData {
 				if i != 0 {
-					fmt.Println("client" + id + " sent data")
+					fmt.Println("Error: client" + id + " update, exceed 1")
 					return
 				}
 			}
@@ -168,12 +168,12 @@ func socketServer() (err error) {
 				return
 			}
 			if err = json.Unmarshal(jsonData, &data); err != nil {
-				fmt.Println("Error:", err)
+				fmt.Println("Error in Ummarshal:", err)
 				return
 			}
 			oriData, ok := client.Data().(Data)
 			if !ok {
-				fmt.Println("data not found")
+				fmt.Println("Error: data not found, don't update")
 				return
 			}
 			data.SocketID = string(id)
@@ -191,7 +191,7 @@ func socketServer() (err error) {
 		err = client.On("chat", func(requestData ...any) {
 			for i := range requestData {
 				if i != 0 {
-					fmt.Println("client" + id + " sent data, exceed 1")
+					fmt.Println("client" + id + " chat, exceed 1")
 					return
 				}
 			}
@@ -238,16 +238,16 @@ func socketServer() (err error) {
 				//fmt.Println("update" + socketID)
 				thisSocket, ok := socketMap.Load(socketID)
 				if !ok {
-					fmt.Println("socket not found")
+					fmt.Println("Error: socket not found, don't send update")
 					continue
 				}
 				data, ok := thisSocket.Data().(Data)
 				if !ok {
-					fmt.Println("data not found")
+					fmt.Println("Error: data not found, don't send update")
 					continue
 				}
 				if data.Model == "" {
-					fmt.Println("model not found")
+					fmt.Println("Error: model not found, don't send update")
 					continue
 				}
 				if roomMap[data.RoomID] == nil {
