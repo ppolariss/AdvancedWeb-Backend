@@ -45,6 +45,15 @@ type Chat struct {
 	Message string `json:"message"`
 }
 
+func assertOnlyOne(data []any) bool {
+	for i := range data {
+		if i != 0 {
+			return true
+		}
+	}
+	return false
+}
+
 func socketServer() (err error) {
 	httpServer := types.CreateServer(nil)
 	c := socket.DefaultServerOptions()
@@ -89,13 +98,9 @@ func socketServer() (err error) {
 	}
 	err = io.Of("/room", nil).On("connection", func(clients ...any) {
 		// only one client in this function
-
-		for i, client := range clients {
-			if client != nil && i != 0 {
-				fmt.Println("Error: client" + client.(*socket.Socket).Id() + " connected, exceed 1")
-				return
-				//fmt.Println(i, client.(*socket.Socket).Id())
-			}
+		if assertOnlyOne(clients) {
+			//" + client.(*socket.Socket).Id() + "
+			fmt.Println("Error: client connected, exceed 1")
 		}
 		client := clients[0].(*socket.Socket)
 		id := client.Id()
@@ -110,7 +115,7 @@ func socketServer() (err error) {
 			return
 		}
 
-		err = client.On("disconnect", func(clients ...any) {
+		err = client.On("disconnect", func(_ ...any) {
 			fmt.Println("Info: client" + id + " disconnected")
 			//io.Emit("offline", map[string]interface{}{
 			//	"socketid": id,
@@ -137,7 +142,7 @@ func socketServer() (err error) {
 			//}
 			io.Sockets().Sockets().Delete(id)
 		})
-		err = client.On("disconnection", func(clients ...any) {
+		err = client.On("disconnection", func(_ ...any) {
 			fmt.Println("Info: client" + id + " disconnection")
 			if roomID == "" {
 				return
@@ -154,11 +159,8 @@ func socketServer() (err error) {
 		}
 
 		err = client.On("init", func(requestData ...any) {
-			for i, _ := range requestData {
-				if i != 0 {
-					fmt.Println("Error: client" + id + " init, exceed 1")
-					return
-				}
+			if assertOnlyOne(requestData) {
+				fmt.Println("Error: client" + id + " init, exceed 1")
 			}
 			requestDatum := requestData[0]
 			var jsonData []byte
@@ -190,11 +192,8 @@ func socketServer() (err error) {
 		}
 
 		err = client.On("update", func(requestData ...any) {
-			for i, _ := range requestData {
-				if i != 0 {
-					fmt.Println("Error: client" + id + " update, exceed 1")
-					return
-				}
+			if assertOnlyOne(requestData) {
+				fmt.Println("Error: client" + id + " update, exceed 1")
 			}
 			requestDatum := requestData[0]
 			var jsonData []byte
@@ -225,11 +224,8 @@ func socketServer() (err error) {
 		}
 
 		err = client.On("chat", func(requestData ...any) {
-			for i := range requestData {
-				if i != 0 {
-					fmt.Println("client" + id + " chat, exceed 1")
-					return
-				}
+			if assertOnlyOne(requestData) {
+				fmt.Println("client" + id + " chat, exceed 1")
 			}
 			requestDatum := requestData[0]
 			var jsonData []byte
