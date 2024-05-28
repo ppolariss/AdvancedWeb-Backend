@@ -102,7 +102,7 @@ func socketServer() (err error) {
 			//		// "action":   "disconnect",
 			//	})
 			//}
-
+			io.Sockets().Sockets().Delete(id)
 		})
 		err = client.On("disconnection", func(clients ...any) {
 			fmt.Println("Info: client" + id + " disconnection")
@@ -112,6 +112,7 @@ func socketServer() (err error) {
 			err = io.Of(socket.Room(roomID), nil).Emit("offline", map[string]interface{}{
 				"id": id,
 			})
+			io.Sockets().Sockets().Delete(id)
 		})
 
 		if err != nil {
