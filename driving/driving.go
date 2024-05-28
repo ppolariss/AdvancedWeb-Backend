@@ -6,6 +6,7 @@ import (
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -74,21 +75,22 @@ func socketServer() (err error) {
 		if err != nil {
 			fmt.Println("Error in sendRooms", err)
 		}
-		err = client.On("createRooms", func(roomsData ...any) {
-			for _, data := range roomsData {
-				if data != nil {
-					var jsonData []byte
-					jsonData, err = json.Marshal(data)
-					if err != nil {
-						return
-					}
-					room := string(jsonData)
-					if len(globalRooms[room]) == 0 {
-						fmt.Println("Info: room " + room + " created")
-						globalRooms[room] = make([]string, 0)
-					}
-				}
-			}
+		err = client.On("createRooms", func(_ ...any) {
+			//for _, data := range roomsData {
+			//	if data != nil {
+			//		var jsonData []byte
+			//		jsonData, err = json.Marshal(data)
+			//		if err != nil {
+			//			return
+			//		}
+			//		room := string(jsonData)
+			//		if len(globalRooms[room]) == 0 {
+			//			fmt.Println("Info: room " + room + " created")
+			//			globalRooms[room] = make([]string, 0)
+			//		}
+			//	}
+			//}
+			globalRooms["room"+strconv.Itoa(len(globalRooms)+1)] = make([]string, 0)
 			err = client.Emit("sendRooms", map[string]interface{}{
 				"rooms": globalRooms,
 			})
