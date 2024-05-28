@@ -69,7 +69,7 @@ func socketServer() (err error) {
 	err = io.Of("/hall", nil).On("connection", func(clients ...any) {
 		client := clients[0].(*socket.Socket)
 		err = client.Emit("sendRooms", map[string]interface{}{
-			"roomData": globalRooms,
+			"rooms": globalRooms,
 		})
 		if err != nil {
 			fmt.Println("Error in sendRooms", err)
@@ -83,11 +83,15 @@ func socketServer() (err error) {
 						return
 					}
 					room := string(jsonData)
-					globalRooms[room] = make([]string, 0)
+					if len(globalRooms[room]) == 0 {
+						fmt.Println("Info: room " + room + " created")
+					} else {
+						globalRooms[room] = make([]string, 0)
+					}
 				}
 			}
 			err = client.Emit("sendRooms", map[string]interface{}{
-				"roomData": globalRooms,
+				"rooms": globalRooms,
 			})
 		})
 		if err != nil {
@@ -129,7 +133,7 @@ func socketServer() (err error) {
 			if roomID == "" {
 				return
 			}
-			err = io.Of(socket.Room(roomID), nil).Emit("offline", map[string]interface{}{
+			err = io.Of("/room", nil).To(socket.Room(roomID)).Emit("offline", map[string]interface{}{
 				"id": id,
 			})
 			////fmt.Println(client.Rooms().Len())
@@ -141,17 +145,22 @@ func socketServer() (err error) {
 			//		// "action":   "disconnect",
 			//	})
 			//}
-			io.Sockets().Sockets().Delete(id)
+			io.Of("/room", nil).Sockets().Delete(id)
+			// io.Sockets().Sockets().Delete(id)
 		})
 		err = client.On("disconnection", func(_ ...any) {
 			fmt.Println("Info: client" + id + " disconnection")
 			if roomID == "" {
 				return
 			}
-			err = io.Of(socket.Room(roomID), nil).Emit("offline", map[string]interface{}{
+			err = io.Of("/room", nil).To(socket.Room(roomID)).Emit("offline", map[string]interface{}{
 				"id": id,
 			})
-			io.Sockets().Sockets().Delete(id)
+			io.Of("/room", nil).Sockets().Delete(id)
+			// err = io.Of(socket.Room(roomID), nil).Emit("offline", map[string]interface{}{
+			// 	"id": id,
+			// })
+			// io.Sockets().Sockets().Delete(id)
 		})
 
 		if err != nil {
@@ -246,10 +255,12 @@ func socketServer() (err error) {
 			if chat.Type == "global" {
 				err = client.Broadcast().Emit("message", chat)
 			} else if chat.Type == "room" {
-				err = io.Of(socket.Room(chat.RoomID), nil).Emit("message", chat)
+				err = io.Of("/room", nil).To(socket.Room(chat.RoomID)).Emit("message", chat)
+				// err = io.Of(socket.Room(chat.RoomID), nil).Emit("message", chat)
 			} else if chat.Type == "private" {
 				// TODO
-				err = io.Of(socket.Room(chat.ID), nil).Emit("message", chat)
+				err = io.Of("/room", nil).To(socket.Room(chat.RoomID)).Emit("message", chat)
+				// err = io.Of(socket.Room(chat.ID), nil).Emit("message", chat)
 			}
 			if err != nil {
 				fmt.Println(err)
