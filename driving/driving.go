@@ -104,6 +104,16 @@ func socketServer() (err error) {
 			//}
 
 		})
+		err = client.On("disconnection", func(clients ...any) {
+			fmt.Println("client" + id + " disconnected")
+			if roomID == "" {
+				return
+			}
+			err = io.Of(socket.Room(roomID), nil).Emit("offline", map[string]interface{}{
+				"id": id,
+			})
+		})
+		
 		if err != nil {
 			fmt.Println(err)
 			return
