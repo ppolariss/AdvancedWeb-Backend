@@ -12,7 +12,7 @@
   <script src="socket.io.js"></script>
   <script>
     // http://
-    const socket = io('ws://10.117.245.17:53000/');
+    const socket = io('ws://10.117.245.17:53000/room')
     //   console.log(socket);
     socket.on('online', function (data) {
       console.log(data);

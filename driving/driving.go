@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/zishang520/engine.io/types"
-	"github.com/zishang520/socket.io/socket"
 	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/zishang520/engine.io/types"
+	"github.com/zishang520/socket.io/socket"
 )
 
 type Position struct {
@@ -62,7 +63,7 @@ func socketServer() (err error) {
 		Origin:      "*",
 		Credentials: true,
 	})
-	var globalRooms map[string][]string
+	globalRooms := make(map[string][]string) 
 
 	io := socket.NewServer(httpServer, c)
 	err = io.Of("/hall", nil).On("connection", func(clients ...any) {
@@ -206,6 +207,9 @@ func socketServer() (err error) {
 				fmt.Println("Error in Ummarshal:", err)
 				return
 			}
+			if client.Data() == nil {
+				return
+			}
 			oriData, ok := client.Data().(Data)
 			if !ok {
 				fmt.Println("Error: data not found, don't update")
@@ -264,7 +268,7 @@ func socketServer() (err error) {
 	defer ticker.Stop()
 	go func() {
 		for range ticker.C {
-			socketMap := io.Sockets().Sockets()
+			socketMap := io.Of("/room", nil).Sockets()
 			roomMap := make(map[string][]Data)
 			for _, socketID := range socketMap.Keys() {
 				//fmt.Println("update" + socketID)
@@ -289,7 +293,8 @@ func socketServer() (err error) {
 			}
 			if len(roomMap) > 0 {
 				for roomID, roomData := range roomMap {
-					err = io.Of(socket.Room(roomID), nil).Emit("update", roomData)
+					// fmt.Println("/room/"+roomID)
+					err = io.Of("/room", nil).To(socket.Room(roomID)).Emit("update", roomData)
 					if err != nil {
 						fmt.Println(err)
 						continue
