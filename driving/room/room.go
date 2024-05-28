@@ -65,6 +65,15 @@ func Room(io *socket.Server) (err error) {
 			//	})
 			//}
 			io.Of("/room", nil).Sockets().Delete(id)
+			removeIdx := -1
+			for idx, thisID := range GlobalRooms[roomID] {
+				if thisID == string(id) {
+					removeIdx = idx
+				}
+			}
+			if removeIdx > -1 {
+				GlobalRooms[roomID] = append(GlobalRooms[roomID][:removeIdx], GlobalRooms[roomID][removeIdx+1:]...)
+			}
 			// io.Sockets().Sockets().Delete(id)
 		})
 		if err != nil {
