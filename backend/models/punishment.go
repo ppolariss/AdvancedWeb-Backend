@@ -18,6 +18,9 @@ var PunishmentTypeMap = map[int8]string{
 	RedLight:       "闯红灯",
 	NoLicensePlate: "无牌",
 	Unknown:        "未知",
+	CRASH:          "碰撞",
+	AIRCRASH:       "坠机",
+	PHONING:        "打电话",
 }
 
 const (
@@ -28,6 +31,9 @@ const (
 	FlameOut
 	RedLight
 	NoLicensePlate
+	CRASH
+	AIRCRASH
+	PHONING
 )
 
 type ExamPunishment struct {

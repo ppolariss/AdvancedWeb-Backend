@@ -11,12 +11,15 @@ go run main.go
 2. 
 ```
 cd backend
+go install github.com/swaggo/swag/cmd/swag@latest
+swag init --parseDependency --parseDepth 1
 go build -o main.exe
 ./main.exe
 ```
 
 3. 
 ```
-docker pull ppolariss/advanced_web_backend:v1
+<!-- docker pull ppolariss/advanced_web_backend:latest -->
+docker compose -p awb pull
 docker compose -p awb up -d
 ```
