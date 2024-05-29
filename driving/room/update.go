@@ -43,5 +43,4 @@ func Update(io *socket.Server) {
 			}
 		}
 	}
-	return
 }
