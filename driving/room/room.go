@@ -37,7 +37,7 @@ func Room(io *socket.Server) (err error) {
 
 		err = client.On("disconnect", func(_ ...any) {
 			fmt.Println("Info: client" + id + " disconnected")
-			go Disconnect(io, id, roomID)
+			Disconnect(io, id, roomID)
 		})
 		if err != nil {
 			utils.Logger.Error(err.Error())
@@ -46,7 +46,7 @@ func Room(io *socket.Server) (err error) {
 
 		err = client.On("disconnection", func(_ ...any) {
 			fmt.Println("Info: client" + id + " disconnection")
-			go Disconnect(io, id, roomID)
+			Disconnect(io, id, roomID)
 		})
 		if err != nil {
 			utils.Logger.Error(err.Error())
