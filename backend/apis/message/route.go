@@ -8,6 +8,8 @@ import (
 func RegisterRoutesWithoutAuthorization(routes fiber.Router) {
 	routes.Get("/ws/chat", websocket.New(MossChat))
 	routes.Post("/records", AddRecords)
+	routes.Get("ws/video", websocket.New(VideoChat))
+	go HandleMessages()
 }
 
 func RegisterRoutes(routes fiber.Router) {

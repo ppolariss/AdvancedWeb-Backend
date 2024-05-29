@@ -65,6 +65,8 @@ func Room(io *socket.Server) (err error) {
 			//	})
 			//}
 			io.Of("/room", nil).Sockets().Delete(id)
+
+			MutexRooms.Lock()
 			removeIdx := -1
 			for idx, thisID := range GlobalRooms[roomID] {
 				if thisID == string(id) {
@@ -74,6 +76,7 @@ func Room(io *socket.Server) (err error) {
 			if removeIdx > -1 {
 				GlobalRooms[roomID] = append(GlobalRooms[roomID][:removeIdx], GlobalRooms[roomID][removeIdx+1:]...)
 			}
+			MutexRooms.Unlock()
 			// io.Sockets().Sockets().Delete(id)
 		})
 		if err != nil {
@@ -125,10 +128,12 @@ func Room(io *socket.Server) (err error) {
 			userID = data.UserID
 			var room = socket.Room(data.RoomID)
 			fmt.Println("Info: client" + data.SocketID + " joined room " + data.RoomID)
+			MutexRooms.Lock()
 			if len(GlobalRooms[roomID]) == 0 {
 				GlobalRooms[roomID] = make([]string, 0)
 			}
 			GlobalRooms[roomID] = append(GlobalRooms[roomID], string(id))
+			MutexRooms.Unlock()
 			client.Join(room)
 			// for _, i := range client.Rooms().Keys() {
 			// 	fmt.Println(i)

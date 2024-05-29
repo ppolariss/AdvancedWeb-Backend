@@ -7,7 +7,7 @@ import (
 	"github.com/opentreehole/go-common"
 	"net/http"
 	"src/config"
-
+	"src/utils"
 	//"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/websocket/v2"
 	client "github.com/gorilla/websocket"
@@ -184,7 +184,7 @@ func AddRecords(c *fiber.Ctx) (err error) {
 }
 
 // ListMyRecords @ListMyRecords
-// @Router 
+// @Router
 func ListMyRecords(c *fiber.Ctx) (err error) {
 	user, err := GetGeneralUser(c)
 	if err != nil {
@@ -236,24 +236,25 @@ func MossChat(c *websocket.Conn) {
 	var err error
 	defer func() {
 		if err != nil {
-			//Logger.Error(
-			//	"client websocket return with error",
-			//	zap.Error(err),
-			//)
+			utils.Logger.Error(
+				"client websocket return with error",
+				//zap.Error(err),
+			)
 			response := AIResponse{Status: -1, Output: err.Error()}
 			//if httpError, ok := err.(*HttpError); ok {
 			//	response.StatusCode = httpError.Code
 			//}
 			err = c.WriteJSON(response)
 			if err != nil {
-				log.Println("write err error: ", err)
+
+				utils.Logger.Error("write err error: ", err)
 			}
 			_ = c.Close()
 		}
 	}()
 	_, requestMess, err := c.ReadMessage()
 	if err != nil {
-		log.Println("Error reading message from client:", err)
+		utils.Logger.Error("Error reading message from client:", err)
 		return
 	}
 	requestMessage := string(requestMess)
@@ -265,7 +266,7 @@ func MossChat(c *websocket.Conn) {
 		"MOSS_API_KEY": []string{config.Config.MossApiKey},
 	})
 	if err != nil {
-		log.Fatal(config.Config.MossUrl+" Error connecting to WebSocket server:", err)
+		utils.Logger.Error(config.Config.MossUrl+" Error connecting to WebSocket server:", err)
 	}
 	defer func(conn *client.Conn) {
 		err = conn.Close()
@@ -285,7 +286,7 @@ func MossChat(c *websocket.Conn) {
 		for {
 			_, responseMessage, err := mossConn.ReadMessage()
 			if err != nil {
-				log.Println("Error reading message:", err)
+				utils.Logger.Error("Error reading message:", err)
 				return
 			}
 			fmt.Printf("Received response from server: %s\n", responseMessage)
@@ -307,12 +308,12 @@ func MossChat(c *websocket.Conn) {
 	request := map[string]string{"request": requestMessage}
 	requestBytes, err := json.Marshal(request)
 	if err != nil {
-		log.Fatal("Error marshalling request:", err)
+		utils.Logger.Error("Error marshalling request:", err)
 	}
 
 	err = mossConn.WriteMessage(client.TextMessage, requestBytes)
 	if err != nil {
-		log.Println("Error sending message:", err)
+		utils.Logger.Error("Error sending message:", err)
 		return
 	}
 	fmt.Printf("Sent message to server: %s\n", requestMessage)
@@ -325,9 +326,9 @@ func MossChat(c *websocket.Conn) {
 			log.Println("Received interrupt signal, shutting down...")
 
 			// Cleanly close the WebSocket connection by sending a close message
-			err := mossConn.WriteMessage(client.CloseMessage, client.FormatCloseMessage(client.CloseNormalClosure, ""))
+			err = mossConn.WriteMessage(client.CloseMessage, client.FormatCloseMessage(client.CloseNormalClosure, ""))
 			if err != nil {
-				log.Println("Error sending close message:", err)
+				utils.Logger.Error("Error sending close message:", err)
 				return
 			}
 
@@ -339,6 +340,72 @@ func MossChat(c *websocket.Conn) {
 		}
 	}
 
-	//log.Println("Server started on :8080")
-	//log.Fatal(app.Listen(":8090"))
 }
+
+func VideoChat(c *websocket.Conn) {
+	var err error
+	defer func() {
+		mu.Lock()
+		delete(clients, c)
+		mu.Unlock()
+		err = c.Close()
+		if err != nil {
+			utils.Logger.Error(err.Error())
+		}
+	}()
+
+	mu.Lock()
+	clients[c] = true
+	mu.Unlock()
+
+	log.Println("connection")
+
+	for {
+		_, requestMessage, err := c.ReadMessage()
+		if err != nil {
+			log.Printf("error: %v", err)
+			break
+		}
+		fmt.Println(string(requestMessage))
+		//var msg VideoMessage
+		//if err := c.ReadJSON(&msg);
+		//log.Println("message")
+		//log.Printf("Received message => %s", msg.Data)
+		log.Printf("Clients count => %d", len(clients))
+		broadcast <- struct {
+			C       *websocket.Conn
+			Message []byte
+		}{C: c, Message: requestMessage}
+	}
+}
+
+func HandleMessages() {
+	var err error
+	for {
+		msg := <-broadcast
+		mu.Lock()
+		for c := range clients {
+			if c == msg.C {
+				continue
+			}
+			err = c.WriteJSON(msg.Message)
+			if err != nil {
+				utils.Logger.Error("error: %v", err)
+				err = c.Close()
+				if err != nil {
+					utils.Logger.Error(err.Error())
+				}
+				delete(clients, c)
+			}
+		}
+		mu.Unlock()
+	}
+}
+
+//app.Get("/ws", func(c *fiber.Ctx) error {
+//	if websocket.IsWebSocketUpgrade(c) {
+//		c.Locals("allowed", true)
+//		return c.Next()
+//	}
+//	return fiber.ErrUpgradeRequired
+//})

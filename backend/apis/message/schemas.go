@@ -1,6 +1,8 @@
 package message
 
 import (
+	"github.com/gofiber/websocket/v2"
+	"sync"
 	"time"
 )
 
@@ -26,3 +28,18 @@ type AddRecordsRequest struct {
 	Message   string    `json:"message"`
 	CreatedAt time.Time `json:"created_at"`
 }
+
+type VideoMessage struct {
+	C       *websocket.Conn
+	Message []byte
+}
+
+var (
+	clients   = make(map[*websocket.Conn]bool)
+	broadcast = make(chan VideoMessage)
+	mu        sync.Mutex
+)
+
+//type VideoMessage struct {
+//	Data string `json:"data"`
+//}

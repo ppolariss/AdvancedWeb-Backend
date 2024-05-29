@@ -31,7 +31,9 @@ func Hall(io *socket.Server) (err error) {
 			//		}
 			//	}
 			//}
+			MutexRooms.Lock()
 			GlobalRooms["room"+strconv.Itoa(len(GlobalRooms)+1)] = make([]string, 0)
+			MutexRooms.Unlock()
 			err = client.Emit("sendRooms", map[string]interface{}{
 				"rooms": GlobalRooms,
 			})
