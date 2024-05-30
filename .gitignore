@@ -1,4 +1,5 @@
-./backend/main.exe
+/backend/**.exe
 /**/.idea/
 /**/.vscode/
 /test/
+/backend/html/

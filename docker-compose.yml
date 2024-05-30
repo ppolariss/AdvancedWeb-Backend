@@ -19,6 +19,8 @@ services:
     ports:
       - "8080:8080"
     container_name: advanced-web-backend-service
+    volumes:
+      - /home/solaris/Desktop/AdvancedWeb-Backend/html:/app/html
 
   db-service:
     container_name: db-service
