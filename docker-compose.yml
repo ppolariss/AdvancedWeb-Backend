@@ -52,4 +52,4 @@ services:
     ports:
       - "80:80"
     volumes:
-      - /home/solaris/Desktop/AdvancedWeb-Backend/assets:/usr/share/nginx/html/assets
+      - /home/solaris/Desktop/AdvancedWeb-Backend/html/assets:/usr/share/nginx/html/assets
