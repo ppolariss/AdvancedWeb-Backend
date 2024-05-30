@@ -5,6 +5,7 @@ networks:
 
 volumes:
   db-data:
+  shared_volume:
 
 services:
   advanced-web-backend-service:
@@ -21,6 +22,7 @@ services:
     container_name: advanced-web-backend-service
     volumes:
       - /home/solaris/Desktop/AdvancedWeb-Backend/html:/app/html
+      - shared_volume:/app/html
 
   db-service:
     container_name: db-service
@@ -53,3 +55,4 @@ services:
       - "80:80"
     volumes:
       - /home/solaris/Desktop/AdvancedWeb-Backend/html/assets:/usr/share/nginx/html/assets
+      - shared_volume:/usr/share/nginx/html

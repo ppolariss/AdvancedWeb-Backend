@@ -383,7 +383,8 @@ func HandleMessages() {
 	var err error
 	for {
 		msg := <-broadcast
-		fmt.Println(msg)
+		fmt.Println(msg.C)
+		fmt.Println(string(msg.Message))
 		mu.Lock()
 		for c := range clients {
 			if c == msg.C {
