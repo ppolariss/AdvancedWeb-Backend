@@ -390,7 +390,7 @@ func HandleMessages() {
 			if c == msg.C {
 				continue
 			}
-			err = c.WriteJSON(msg.Message)
+			err = c.WriteMessage(websocket.TextMessage, msg.Message)
 			if err != nil {
 				utils.Logger.Error("error: %v", err)
 				err = c.Close()
