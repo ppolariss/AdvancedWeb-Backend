@@ -64,13 +64,13 @@ const (
 //	return DB.Delete(&UserJwtSecret{}, userID).Error
 //}
 
-//func CheckJWTToken(token string, secret string) (claims *UserClaims, err error) {
-//	claims = new(UserClaims)
-//	_, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
-//		return []byte(secret), nil
-//	})
-//	return
-//}
+func CheckJWTToken(token string, secret string) (claims *UserClaims, err error) {
+	claims = new(UserClaims)
+	_, err = jwt.ParseWithClaims(token, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	return
+}
 
 func (user *LoginUser) CreateJWTToken() (accessToken string, err error) {
 	// get jwt key and secret
@@ -101,7 +101,7 @@ func (user *LoginUser) CreateJWTToken() (accessToken string, err error) {
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    key,
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * time.Minute)), // // 60 minutes
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * time.Minute)), // 60 minutes
 		},
 		ID: user.ID,
 	}
@@ -116,9 +116,9 @@ func (user *LoginUser) CreateJWTToken() (accessToken string, err error) {
 	claim.Type = JWTTypeAccess
 	//claim.ExpiresAt = jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)) // 30 days
 	//refreshToken, err = jwt.NewWithClaims(jwt.SigningMethodHS256, claim).SignedString([]byte(secret))
-	if err != nil {
-		return "", err
-	}
+	// if err != nil {
+	// 	return "", err
+	// }
 
 	return
 }

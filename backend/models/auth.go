@@ -38,6 +38,18 @@ func GetGeneralUser(c *fiber.Ctx) (user *LoginUser, err error) {
 	if err != nil {
 		return nil, common.Unauthorized("Unauthorized")
 	}
+	// err = jwt.ParseWithClaims(token, &user, func(token *jwt.Token) (interface{}, error) {
+	// 	return []byte(config.GetJwtSecret()), nil
+	// })
+	var userJwtSecret UserJwtSecret
+	err = DB.Take(&userJwtSecret, user.ID).Error
+	if err != nil {
+		return nil, common.Unauthorized("Unauthorized")
+	}
+	_, err = CheckJWTToken(token, userJwtSecret.Secret)
+	if err != nil {
+		return nil, common.Unauthorized("Unauthorized")
+	}
 
 	// load user from database in transaction
 	err = user.CheckUserID()
