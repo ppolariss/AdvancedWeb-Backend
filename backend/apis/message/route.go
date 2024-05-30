@@ -6,15 +6,15 @@ import (
 )
 
 func RegisterRoutesWithoutAuthorization(routes fiber.Router) {
-	// routes.Use("/ws/*", func(c *fiber.Ctx) error {
-	// 	// IsWebSocketUpgrade returns true if the client
-	// 	// requested upgrade to the WebSocket protocol.
-	// 	if websocket.IsWebSocketUpgrade(c) {
-	// 		c.Locals("allowed", true)
-	// 		return c.Next()
-	// 	}
-	// 	return fiber.ErrUpgradeRequired
-	// })
+	routes.Use("/ws/*", func(c *fiber.Ctx) error {
+		// IsWebSocketUpgrade returns true if the client
+		// requested upgrade to the WebSocket protocol.
+		if websocket.IsWebSocketUpgrade(c) {
+			c.Locals("allowed", true)
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
+	})
 	routes.Get("/ws/chat", websocket.New(MossChat))
 	routes.Get("/ws/video", websocket.New(VideoChat))
 	routes.Post("/records", AddRecords)

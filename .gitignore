@@ -1,7 +1,7 @@
 /backend/**.exe
 /**/.idea/
 /**/.vscode/
-/test/
+/**/test/
 /backend/html/
 /html/
 /assets/

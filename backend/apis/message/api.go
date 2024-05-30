@@ -343,6 +343,7 @@ func MossChat(c *websocket.Conn) {
 }
 
 func VideoChat(c *websocket.Conn) {
+	// TODO: userID and dbLog
 	var err error
 	defer func() {
 		mu.Lock()

@@ -2,24 +2,29 @@ package apis
 
 import (
 	"github.com/gofiber/fiber/v2"
-	// "github.com/gofiber/fiber/v2/middleware/filesystem"
+	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	fiberSwagger "github.com/swaggo/fiber-swagger"
-	// "net/http"
+	"net/http"
 	"src/apis/auth"
 	"src/apis/exam"
 	"src/apis/message"
 	"src/apis/user"
 	"src/models"
+	"strings"
+	// "github.com/gofiber/websocket/v2"
 )
 
 func registerRoutes(app *fiber.App) {
-	// app.Use(filesystem.New(filesystem.Config{
-	// 	Root:         http.Dir("./html"),
-	// 	Browse:       true,
-	// 	Index:        "index.html",
-	// 	NotFoundFile: "index.html",
-	// 	MaxAge:       3600,
-	// }))
+	app.Use(filesystem.New(filesystem.Config{
+		Root:         http.Dir("./html"),
+		Browse:       true,
+		Index:        "index.html",
+		NotFoundFile: "index.html",
+		MaxAge:       3600,
+		Next: func(c *fiber.Ctx) bool {
+			return strings.HasPrefix(c.Path(), "/api")
+		},
+	}))
 	// app.Get("/*", func(c *fiber.Ctx) error {
 	// 	return c.SendFile("html/index.html")
 	// 	// return c.Redirect("/api")
