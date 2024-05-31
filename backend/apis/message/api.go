@@ -2,16 +2,15 @@ package message
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/opentreehole/go-common"
+	"log"
 	"net/http"
 	"src/config"
 	"src/utils"
 	//"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/websocket/v2"
 	client "github.com/gorilla/websocket"
-	"log"
 	"os"
 	"os/signal"
 	. "src/models"
@@ -165,13 +164,7 @@ func ListMyChatRecords(c *fiber.Ctx) (err error) {
 	return c.JSON(records)
 }
 
-// AddRecords @AddRecords
-// private
-func AddRecords(c *fiber.Ctx) (err error) {
-	var addRecordsRequest AddRecordsRequest
-	if err = c.BodyParser(&addRecordsRequest); err != nil {
-		return common.BadRequest("Invalid request body")
-	}
+func addRecord(addRecordsRequest AddRecordsRequest) (err error) {
 	record := Record{
 		CreatedAt: addRecordsRequest.CreatedAt,
 		UserID:    addRecordsRequest.UserID,
@@ -180,7 +173,20 @@ func AddRecords(c *fiber.Ctx) (err error) {
 		ToID:      addRecordsRequest.ToID,
 		Message:   addRecordsRequest.Message,
 	}
-	return DB.Create(&record).Error
+	if err = DB.Create(&record).Error; err != nil {
+		utils.Logger.Error(err.Error())
+	}
+	return
+}
+
+// AddRecords @AddRecords
+// private
+func AddRecords(c *fiber.Ctx) (err error) {
+	var addRecordsRequest AddRecordsRequest
+	if err = c.BodyParser(&addRecordsRequest); err != nil {
+		return common.BadRequest("Invalid request body")
+	}
+	return addRecord(addRecordsRequest)
 }
 
 // ListMyRecords @ListMyRecords
@@ -244,12 +250,13 @@ func MossChat(c *websocket.Conn) {
 			//if httpError, ok := err.(*HttpError); ok {
 			//	response.StatusCode = httpError.Code
 			//}
-			err = c.WriteJSON(response)
-			if err != nil {
 
+			if err = c.WriteJSON(response); err != nil {
 				utils.Logger.Error("write err error: ", err)
 			}
-			_ = c.Close()
+			if err = c.Close(); err != nil {
+				utils.Logger.Error("close err error: ", err)
+			}
 		}
 	}()
 	_, requestMess, err := c.ReadMessage()
@@ -258,8 +265,17 @@ func MossChat(c *websocket.Conn) {
 		return
 	}
 	requestMessage := string(requestMess)
-	//fmt.Println("Received message from client:", requestMessage)
+	//log.Println("Received message from client:", requestMessage)
+	utils.Logger.Info("Received message from client:" + requestMessage)
 	log.Println("Received message from client:", requestMessage)
+	go addRecord(AddRecordsRequest{
+		CreatedAt: time.Now(),
+		UserID:    0,
+		RoomID:    "moss",
+		Type:      "toMoss",
+		ToID:      0,
+		Message:   requestMessage,
+	})
 
 	// 连接到目标 WebSocket 服务器
 	mossConn, _, err := client.DefaultDialer.Dial(config.Config.MossUrl, http.Header{
@@ -269,9 +285,8 @@ func MossChat(c *websocket.Conn) {
 		utils.Logger.Error(config.Config.MossUrl+" Error connecting to WebSocket server:", err)
 	}
 	defer func(conn *client.Conn) {
-		err = conn.Close()
-		if err != nil {
-			fmt.Println(err)
+		if conn.Close(); err != nil {
+			utils.Logger.Error("Error closing connection:", err)
 		}
 	}(mossConn)
 
@@ -289,7 +304,7 @@ func MossChat(c *websocket.Conn) {
 				utils.Logger.Error("Error reading message:", err)
 				return
 			}
-			fmt.Printf("Received response from server: %s\n", responseMessage)
+			log.Printf("Received response from server: %s\n", responseMessage)
 			var mossResponse MossResponse
 			err = json.Unmarshal(responseMessage, &mossResponse)
 			if err != nil {
@@ -300,6 +315,14 @@ func MossChat(c *websocket.Conn) {
 				if err != nil {
 					continue
 				}
+				go addRecord(AddRecordsRequest{
+					CreatedAt: time.Now(),
+					UserID:    0,
+					RoomID:    "moss",
+					Type:      "fromMoss",
+					ToID:      0,
+					Message:   mossResponse.Output,
+				})
 				return
 			}
 		}
@@ -316,7 +339,7 @@ func MossChat(c *websocket.Conn) {
 		utils.Logger.Error("Error sending message:", err)
 		return
 	}
-	fmt.Printf("Sent message to server: %s\n", requestMessage)
+	log.Printf("Sent message to server: %s\n", requestMessage)
 
 	for {
 		select {
@@ -367,7 +390,7 @@ func VideoChat(c *websocket.Conn) {
 			log.Printf("error: %v", err)
 			break
 		}
-		fmt.Println(string(requestMessage))
+		log.Println(string(requestMessage))
 		//var msg VideoMessage
 		//if err := c.ReadJSON(&msg);
 		//log.Println("message")
@@ -384,8 +407,8 @@ func HandleMessages() {
 	var err error
 	for {
 		msg := <-broadcast
-		fmt.Println(msg.C)
-		fmt.Println(string(msg.Message))
+		log.Println(msg.C)
+		log.Println(string(msg.Message))
 		mu.Lock()
 		for c := range clients {
 			if c == msg.C {
