@@ -11,7 +11,8 @@ const (
 )
 
 var defaultConfig = map[string]string{
-	EnvUrl: "http://127.0.0.1:8080",
+	EnvUrl: "http://advanced-web-backend-service",
+	// EnvUrl: "http://127.0.0.1:8080",
 }
 
 func init() {
