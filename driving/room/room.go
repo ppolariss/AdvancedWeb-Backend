@@ -176,6 +176,42 @@ func Room(io *socket.Server) (err error) {
 			})
 
 		})
+		if err != nil {
+			utils.Logger.Error(err.Error())
+			return
+		}
+
+		err = client.On("event", func(requestData ...any) {
+			if utils.AssertOnlyOne(requestData) {
+				// utils.Logger.Error("client" + id + " event, exceed 1")
+				fmt.Println("client" + id + " event, exceed 1")
+			}
+			requestDatum := requestData[0]
+			var jsonData []byte
+			var event Event
+			jsonData, err = json.Marshal(requestDatum)
+			if err != nil {
+				utils.Logger.Error(err.Error())
+				return
+			}
+			if err = json.Unmarshal(jsonData, &event); err != nil {
+				utils.Logger.Error(err.Error())
+				return
+			}
+			event.SocketID = string(id)
+			fmt.Println("Info: client" + event.SocketID + " event " + event.Event + " in room " + event.RoomID)
+			err = io.Of("/room", nil).To(socket.Room(roomID)).Emit("event", event)
+
+			if err != nil {
+				utils.Logger.Error(err.Error())
+				return
+			}
+		})
+
+		if err != nil {
+			utils.Logger.Error(err.Error())
+			return
+		}
 	})
 	return
 }

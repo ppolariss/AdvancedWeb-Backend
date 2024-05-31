@@ -33,3 +33,11 @@ type Chat struct {
 	Type    string `json:"type"`
 	Message string `json:"message"`
 }
+
+type Event struct {
+	Position Position `json:"position"`
+	Rotation Rotation `json:"rotation"`
+	SocketID string   `json:"id"`
+	RoomID   string   `json:"roomID"`
+	Event    string   `json:"event"`
+}
