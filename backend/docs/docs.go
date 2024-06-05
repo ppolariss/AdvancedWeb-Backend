@@ -1247,7 +1247,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/user.UpdateUserRequest"
                         }
                     },
                     {
@@ -1879,14 +1879,10 @@ const docTemplate = `{
                 1000000000,
                 60000000000,
                 3600000000000,
-                -9223372036854775808,
-                9223372036854775807,
                 1,
                 1000,
                 1000000,
-                1000000000,
-                60000000000,
-                3600000000000
+                1000000000
             ],
             "x-enum-varnames": [
                 "minDuration",
@@ -1897,14 +1893,10 @@ const docTemplate = `{
                 "Second",
                 "Minute",
                 "Hour",
-                "minDuration",
-                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
-                "Second",
-                "Minute",
-                "Hour"
+                "Second"
             ]
         },
         "user.ChangePasswordRequest": {
@@ -1928,6 +1920,23 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "user.UpdateUserRequest": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "gender": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 }
             }

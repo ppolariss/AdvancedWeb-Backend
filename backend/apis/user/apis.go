@@ -38,7 +38,7 @@ func GetUserInfo(c *fiber.Ctx) error {
 // @Tags User
 // @Accept json
 // @Produce json
-// @Param json body models.User true "json"
+// @Param json body UpdateUserRequest true "json"
 // @Success 200
 // @Failure 400 {object} common.HttpError
 // @Failure 403 {object} common.HttpError
@@ -57,6 +57,9 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 
 	user, err := GetUserByID(tmpUser.ID)
+	if err != nil {
+		return err
+	}
 	if updateBody.Age != 0 {
 		user.Age = updateBody.Age
 	}
