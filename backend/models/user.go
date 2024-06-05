@@ -11,7 +11,7 @@ type User struct {
 	Password  string `json:"password" gorm:"not null;size:64"`
 	Email     string `json:"email" gorm:"size:64"`
 	Age       int8   `json:"age" gorm:"not null"`
-	Gender    string `json:"gender" gorm:"not null;type:char(5)"`
+	Gender    string `json:"gender" gorm:"not null;type:char(8)"`
 	Phone     string `json:"phone" gorm:"not null;type:char(13)"`
 	CreatedAt MyTime `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt MyTime `json:"updated_at" gorm:"autoUpdateTime"`

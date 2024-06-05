@@ -179,9 +179,8 @@ func addRecord(addRecordsRequest AddRecordsRequest) (err error) {
 	return
 }
 
-// AddRecords @AddRecords
-// private
 func AddRecords(c *fiber.Ctx) (err error) {
+	// private
 	var addRecordsRequest AddRecordsRequest
 	if err = c.BodyParser(&addRecordsRequest); err != nil {
 		return common.BadRequest("Invalid request body")
@@ -189,8 +188,6 @@ func AddRecords(c *fiber.Ctx) (err error) {
 	return addRecord(addRecordsRequest)
 }
 
-// ListMyRecords @ListMyRecords
-// @Router
 func ListMyRecords(c *fiber.Ctx) (err error) {
 	user, err := GetGeneralUser(c)
 	if err != nil {

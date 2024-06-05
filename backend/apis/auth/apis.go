@@ -54,6 +54,7 @@ func Login(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(TokenResponse{
 		Access: access,
+		UserID: user.ID,
 		//Message: "登录成功",
 	})
 }

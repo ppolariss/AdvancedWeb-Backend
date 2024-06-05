@@ -38,15 +38,16 @@ func Disconnect(io *socket.Server, id socket.SocketId, roomID string) {
 	io.Of("/room", nil).Sockets().Delete(id)
 
 	MutexRooms.Lock()
-	removeIdx := -1
-	for idx, thisID := range GlobalRooms[roomID] {
-		if thisID == string(id) {
-			removeIdx = idx
-		}
-	}
-	if removeIdx > -1 {
-		GlobalRooms[roomID] = append(GlobalRooms[roomID][:removeIdx], GlobalRooms[roomID][removeIdx+1:]...)
-	}
+	delete(GlobalRooms, roomID)
+	// removeIdx := -1
+	// for idx, thisID := range GlobalRooms[roomID] {
+	// 	if thisID == string(id) {
+	// 		removeIdx = idx
+	// 	}
+	// }
+	// if removeIdx > -1 {
+	// 	GlobalRooms[roomID] = append(GlobalRooms[roomID][:removeIdx], GlobalRooms[roomID][removeIdx+1:]...)
+	// }
 	MutexRooms.Unlock()
 	// io.Sockets().Sockets().Delete(id)
 }

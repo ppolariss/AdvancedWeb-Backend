@@ -13,6 +13,7 @@ type LoginRequest struct {
 type TokenResponse struct {
 	Access  string `json:"access,omitempty"`
 	Message string `json:"message,omitempty"`
+	UserID  int    `json:"user_id,omitempty"`
 }
 
 type RegisterRequest struct {
