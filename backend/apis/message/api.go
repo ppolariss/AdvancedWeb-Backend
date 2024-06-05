@@ -103,7 +103,7 @@ func DeleteChat(c *fiber.Ctx) (err error) {
 }
 
 // ListChatRecords @ListChatRecords
-// @Router /api/records/{id} [get]
+// @Router /api/chats/{id}/records [get]
 // @Summary list records by chat ID
 // @Description list records by chat ID
 // @Tags Record
@@ -141,7 +141,7 @@ func ListChatRecords(c *fiber.Ctx) (err error) {
 }
 
 // ListMyChatRecords @ListMyChatRecords
-// @Router /api/records [get]
+// @Router /api/chats/{id}/records/me [get]
 // @Summary list my records
 // @Description list my records
 // @Tags Record
@@ -179,6 +179,17 @@ func addRecord(addRecordsRequest AddRecordsRequest) (err error) {
 	return
 }
 
+// AddRecords @AddRecords
+// @Router /api/records [post]
+// @Summary Add records
+// @Description Add records
+// @Tags Record
+// @Accept json
+// @Produce json
+// @Param json body AddRecordsRequest true "json"
+// @Success 200 {object} nil
+// @Failure 400 {object} common.HttpError
+// @Failure 403 {object} common.HttpError
 func AddRecords(c *fiber.Ctx) (err error) {
 	// private
 	var addRecordsRequest AddRecordsRequest
@@ -188,6 +199,17 @@ func AddRecords(c *fiber.Ctx) (err error) {
 	return addRecord(addRecordsRequest)
 }
 
+// ListMyRecords @ListMyRecords
+// @Router /api/records [get]
+// @Summary list my records
+// @Description list my records
+// @Tags Record
+// @Accept json
+// @Produce json
+// @Success 200 {object} Records
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
 func ListMyRecords(c *fiber.Ctx) (err error) {
 	user, err := GetGeneralUser(c)
 	if err != nil {

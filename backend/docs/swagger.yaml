@@ -156,6 +156,22 @@ definitions:
       status_code:
         type: integer
     type: object
+  message.AddRecordsRequest:
+    properties:
+      created_at:
+        type: string
+      message:
+        type: string
+      room_id:
+        type: string
+      to_id:
+        type: integer
+      type:
+        type: string
+      user_id:
+        description: ChatID   int
+        type: integer
+    type: object
   models.Chat:
     properties:
       created_at:
@@ -451,6 +467,77 @@ paths:
       summary: Get chat by ID
       tags:
       - Chat
+  /api/chats/{id}/records:
+    get:
+      consumes:
+      - application/json
+      description: list records by chat ID
+      parameters:
+      - description: Chat ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Record'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: list records by chat ID
+      tags:
+      - Record
+  /api/chats/{id}/records/me:
+    get:
+      consumes:
+      - application/json
+      description: list my records
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Record'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: list my records
+      tags:
+      - Record
   /api/drivers/punishments/:
     get:
       consumes:
@@ -1013,44 +1100,31 @@ paths:
       summary: list my records
       tags:
       - Record
-  /api/records/{id}:
-    get:
+    post:
       consumes:
       - application/json
-      description: list records by chat ID
+      description: Add records
       parameters:
-      - description: Chat ID
-        in: path
-        name: id
+      - description: json
+        in: body
+        name: json
         required: true
-        type: integer
-      - description: Bearer和token空格拼接
-        in: header
-        name: Authorization
-        required: true
-        type: string
+        schema:
+          $ref: '#/definitions/message.AddRecordsRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Record'
-            type: array
         "400":
           description: Bad Request
-          schema:
-            $ref: '#/definitions/common.HttpError'
-        "401":
-          description: Unauthorized
           schema:
             $ref: '#/definitions/common.HttpError'
         "403":
           description: Forbidden
           schema:
             $ref: '#/definitions/common.HttpError'
-      summary: list records by chat ID
+      summary: Add records
       tags:
       - Record
   /api/register:

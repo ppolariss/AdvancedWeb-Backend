@@ -190,6 +190,113 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/chats/{id}/records": {
+            "get": {
+                "description": "list records by chat ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Record"
+                ],
+                "summary": "list records by chat ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Chat ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Record"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/chats/{id}/records/me": {
+            "get": {
+                "description": "list my records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Record"
+                ],
+                "summary": "list my records",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Record"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/drivers/punishments/": {
             "get": {
                 "description": "List driver punishments",
@@ -1034,11 +1141,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/records/{id}": {
-            "get": {
-                "description": "list records by chat ID",
+            },
+            "post": {
+                "description": "Add records",
                 "consumes": [
                     "application/json"
                 ],
@@ -1048,41 +1153,24 @@ const docTemplate = `{
                 "tags": [
                     "Record"
                 ],
-                "summary": "list records by chat ID",
+                "summary": "Add records",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Chat ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer和token空格拼接",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
+                        "description": "json",
+                        "name": "json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/message.AddRecordsRequest"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Record"
-                            }
-                        }
+                        "description": "OK"
                     },
                     "400": {
                         "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/common.HttpError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/common.HttpError"
                         }
@@ -1566,6 +1654,30 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status_code": {
+                    "type": "integer"
+                }
+            }
+        },
+        "message.AddRecordsRequest": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "room_id": {
+                    "type": "string"
+                },
+                "to_id": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "ChatID   int",
                     "type": "integer"
                 }
             }
