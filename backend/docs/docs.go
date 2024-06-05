@@ -1459,7 +1459,8 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "gender": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 8
                 },
                 "password": {
                     "type": "string",

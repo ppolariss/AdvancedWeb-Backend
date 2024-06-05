@@ -18,6 +18,7 @@ definitions:
       email:
         type: string
       gender:
+        maxLength: 8
         type: string
       password:
         minLength: 3

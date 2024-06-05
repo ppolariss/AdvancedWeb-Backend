@@ -21,6 +21,6 @@ type RegisterRequest struct {
 	Password string `json:"password" minLength:"3" validate:"required,min=3"`
 	Email    string `json:"email" validate:"required,email"`
 	Age      int8   `json:"age" validate:"required"`
-	Gender   string `json:"gender" validate:"required"`
+	Gender   string `json:"gender" validate:"required,max=8"`
 	Phone    string `json:"phone" validate:"required"`
 }
