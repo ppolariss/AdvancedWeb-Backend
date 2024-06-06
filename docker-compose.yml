@@ -40,6 +40,7 @@ services:
       - "13306:3306"
     volumes:
       - db-data:/var/lib/mysql
+      - ./my.cnf:/etc/my.cnf
 
   driving-service:
     container_name: driving-service
