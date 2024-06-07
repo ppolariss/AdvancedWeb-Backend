@@ -11,7 +11,7 @@ const (
 )
 
 var defaultConfig = map[string]string{
-	EnvUrl: "http://advanced-web-backend-service",
+	EnvUrl: "http://advanced-web-backend-service:8080",
 	// EnvUrl: "http://127.0.0.1:8080",
 }
 
