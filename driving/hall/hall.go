@@ -1,9 +1,11 @@
 package hall
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/zishang520/socket.io/socket"
 	. "src/model"
+	"src/utils"
 	"strconv"
 )
 
@@ -16,6 +18,9 @@ func Hall(io *socket.Server) (err error) {
 		if err != nil {
 			fmt.Println("Error in sendRooms", err)
 		}
+		data, _ := json.Marshal(GlobalRooms)
+		utils.Logger.Info("sendRooms " + string(data))
+
 		err = client.On("createRooms", func(_ ...any) {
 			//for _, data := range roomsData {
 			//	if data != nil {
