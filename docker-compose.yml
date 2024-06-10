@@ -16,6 +16,7 @@ services:
       - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
       - MOSS_URL=${MOSS_URL}
       - MOSS_API_KEY=${MOSS_API_KEY}
+      - TZ=Asia/Shanghai
     networks:
       - advanced-web-network
     ports:
@@ -34,6 +35,7 @@ services:
       MYSQL_DATABASE: advanced_web
       MYSQL_USER: user
       MYSQL_PASSWORD: password
+      TZ: Asia/Shanghai
     networks:
       - advanced-web-network
     ports:
