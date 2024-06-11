@@ -174,15 +174,20 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 	if exam.IsFinished() {
 		return common.Forbidden("This exam has already ended")
 	}
+	exam.Normal = endExamRequest.Normal
 	exam.EndTime = &MyTime{Time: time.Now()}
 	exam.Duration = exam.EndTime.Time.Sub(exam.StartTime.Time)
 	err = DB.Transaction(func(tx *gorm.DB) (err error) {
-		err = DB.Model(&exam).Select("EndTime", "Duration").UpdateColumns(&exam).Error
+		err = DB.Model(&exam).Select("EndTime", "Duration", "Normal").UpdateColumns(&exam).Error
 		if err != nil {
 			return
 		}
 		if exam.Score != 100 {
 			info = "Sorry, you didn't pass the exam"
+			return
+		}
+		if !exam.Normal {
+			info = "Sorry, you quit the exam in advance"
 			return
 		}
 		var user User

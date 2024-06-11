@@ -18,6 +18,7 @@ type Exam struct {
 	DeletedAt   gorm.DeletedAt `json:"deleted_at" validate:"omitempty"`
 	ExamType    string         `json:"exam_type" gorm:"default:'exam'"`
 	IsPublic    bool           `json:"is_public" gorm:"default:true"`
+	Normal      bool           `json:"normal" gorm:"default:true"`
 	//ExamPunishments *ExamPunishments   `json:"punishments"`
 }
 

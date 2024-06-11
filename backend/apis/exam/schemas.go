@@ -21,7 +21,8 @@ type GetScoreResponse struct {
 }
 
 type EndExamRequest struct {
-	ID int `json:"id"`
+	ID     int  `json:"id"`
+	Normal bool `json:"normal"`
 }
 
 type EndExamResponse struct {
