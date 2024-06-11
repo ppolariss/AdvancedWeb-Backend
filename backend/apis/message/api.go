@@ -304,7 +304,7 @@ func MossChat(c *websocket.Conn) {
 		utils.Logger.Error(config.Config.MossUrl+" Error connecting to WebSocket server:", err)
 	}
 	defer func(conn *client.Conn) {
-		if conn.Close(); err != nil {
+		if err = conn.Close(); err != nil {
 			utils.Logger.Error("Error closing connection:", err)
 		}
 	}(mossConn)

@@ -13,7 +13,7 @@ services:
     image: ppolariss/advanced_web_backend:latest
     restart: unless-stopped
     environment:
-      - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
+      - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True
       - MOSS_URL=${MOSS_URL}
       - MOSS_API_KEY=${MOSS_API_KEY}
       - TZ=Asia/Shanghai
