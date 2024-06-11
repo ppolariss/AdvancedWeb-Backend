@@ -27,7 +27,7 @@ func ListExams(ctx *fiber.Ctx) (err error) {
 		return
 	}
 	var exams Exams
-	err = DB.Where("user_id = ? and exam_type = 'exam'", tmpUser.ID).Find(&exams).Error
+	err = DB.Where("user_id = ? and exam_type = 'exam'", tmpUser.ID).Order("id desc").Find(&exams).Error
 	if err != nil {
 		return
 	}
@@ -51,7 +51,7 @@ func ListDriverExams(ctx *fiber.Ctx) (err error) {
 		return
 	}
 	var exams Exams
-	err = DB.Where("user_id = ? and exam_type = 'driver'", tmpUser.ID).Find(&exams).Error
+	err = DB.Where("user_id = ? and exam_type = 'driver'", tmpUser.ID).Order("id desc").Find(&exams).Error
 	if err != nil {
 		return
 	}
