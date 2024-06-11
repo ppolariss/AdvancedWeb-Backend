@@ -28,6 +28,7 @@ type Data struct {
 //}
 
 type Chat struct {
+	ToID    string `json:"to_id"`
 	ID      string `json:"id"`
 	RoomID  string `json:"roomID"`
 	Type    string `json:"type"`
