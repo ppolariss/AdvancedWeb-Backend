@@ -32,6 +32,9 @@ func AddPunishment(c *fiber.Ctx) (err error) {
 		return common.BadRequest("Invalid request body")
 	}
 	examID, err := c.ParamsInt("id")
+	if err != nil {
+		return common.BadRequest("Invalid exam ID")
+	}
 	var exam Exam
 	err = DB.Take(&exam, examID).Error
 	if err != nil {
@@ -98,6 +101,9 @@ func ListPunishments(c *fiber.Ctx) (err error) {
 	}
 	var punishments ExamPunishments
 	err = DB.Where("exam_id = ?", exam.ID).Find(&punishments).Error
+	if err != nil {
+		return
+	}
 	return c.JSON(punishments)
 }
 

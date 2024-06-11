@@ -215,8 +215,12 @@ definitions:
         $ref: '#/definitions/time.Duration'
       end_time:
         $ref: '#/definitions/models.MyTime'
+      exam_type:
+        type: string
       id:
         type: integer
+      is_public:
+        type: boolean
       score:
         type: integer
       start_time:
@@ -302,32 +306,20 @@ definitions:
     type: object
   time.Duration:
     enum:
-    - -9223372036854775808
-    - 9223372036854775807
     - 1
     - 1000
     - 1000000
     - 1000000000
     - 60000000000
     - 3600000000000
-    - 1
-    - 1000
-    - 1000000
-    - 1000000000
     type: integer
     x-enum-varnames:
-    - minDuration
-    - maxDuration
     - Nanosecond
     - Microsecond
     - Millisecond
     - Second
     - Minute
     - Hour
-    - Nanosecond
-    - Microsecond
-    - Millisecond
-    - Second
   user.ChangePasswordRequest:
     properties:
       email:

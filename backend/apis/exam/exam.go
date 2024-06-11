@@ -116,11 +116,20 @@ func StartExam(ctx *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
+	var startExamRequest StartExamRequest
+	if err = ctx.BodyParser(&startExamRequest); err != nil {
+		return common.BadRequest("Invalid request body")
+	}
+	examType := startExamRequest.ExamType
+	if examType == "" {
+		examType = "exam"
+	}
 	exam := Exam{
 		UserID: tmpUser.ID,
 		StartTime: &MyTime{
 			Time: time.Now(),
 		},
+		ExamType: examType,
 	}
 	err = DB.Omit("EndTime").Create(&exam).Error
 	if err != nil {

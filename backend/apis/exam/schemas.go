@@ -5,6 +5,7 @@ import (
 )
 
 type StartExamRequest struct {
+	ExamType string `json:"exam_type"`
 }
 
 type StartExamResponse struct {
