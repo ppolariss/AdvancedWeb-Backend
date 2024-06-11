@@ -30,6 +30,8 @@ func RegisterRoutes(routes fiber.Router) {
 	//routes.Put("/answers/:id", ModifyAnswer)
 	//routes.Delete("/answers/:id", DeleteAnswer)
 
+	routes.Get("/drivers", ListDriverExams)
+
 	routes.Get("/drivers/punishments/:id", GetDriverPunishment)
 	routes.Post("/drivers/punishments/", AddDriverPunishment)
 	routes.Get("/drivers/punishments/", ListDriverPunishments)

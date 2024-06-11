@@ -117,6 +117,8 @@ definitions:
     properties:
       id:
         type: integer
+      normal:
+        type: boolean
     type: object
   exam.EndExamResponse:
     properties:
@@ -221,6 +223,8 @@ definitions:
         type: integer
       is_public:
         type: boolean
+      normal:
+        type: boolean
       score:
         type: integer
       start_time:
@@ -306,6 +310,8 @@ definitions:
     type: object
   time.Duration:
     enum:
+    - -9223372036854775808
+    - 9223372036854775807
     - 1
     - 1000
     - 1000000
@@ -314,6 +320,8 @@ definitions:
     - 3600000000000
     type: integer
     x-enum-varnames:
+    - minDuration
+    - maxDuration
     - Nanosecond
     - Microsecond
     - Millisecond
@@ -508,7 +516,7 @@ paths:
             $ref: '#/definitions/common.HttpError'
       summary: list records by chat ID
       tags:
-      - Record
+      - ChatRecord
   /api/chats/{id}/records/me:
     get:
       consumes:
@@ -539,7 +547,38 @@ paths:
             $ref: '#/definitions/common.HttpError'
       summary: list my records
       tags:
-      - Record
+      - ChatRecord
+  /api/drivers:
+    get:
+      consumes:
+      - application/json
+      description: list my driver exams
+      parameters:
+      - description: Bearer和token空格拼接
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Exam'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.HttpError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/common.HttpError'
+      summary: list my driver exams
+      tags:
+      - Driver
   /api/drivers/punishments/:
     get:
       consumes:
@@ -1101,7 +1140,7 @@ paths:
             $ref: '#/definitions/common.HttpError'
       summary: list my records
       tags:
-      - Record
+      - ChatRecord
     post:
       consumes:
       - application/json
@@ -1128,7 +1167,7 @@ paths:
             $ref: '#/definitions/common.HttpError'
       summary: Add records
       tags:
-      - Record
+      - ChatRecord
   /api/register:
     post:
       consumes:

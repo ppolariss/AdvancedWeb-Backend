@@ -106,7 +106,7 @@ func DeleteChat(c *fiber.Ctx) (err error) {
 // @Router /api/chats/{id}/records [get]
 // @Summary list records by chat ID
 // @Description list records by chat ID
-// @Tags Record
+// @Tags ChatRecord
 // @Accept json
 // @Produce json
 // @Param id path int true "Chat ID"
@@ -144,7 +144,7 @@ func ListChatRecords(c *fiber.Ctx) (err error) {
 // @Router /api/chats/{id}/records/me [get]
 // @Summary list my records
 // @Description list my records
-// @Tags Record
+// @Tags ChatRecord
 // @Accept json
 // @Produce json
 // @Success 200 {object} Records
@@ -183,7 +183,7 @@ func addRecord(addRecordsRequest AddRecordsRequest) (err error) {
 // @Router /api/records [post]
 // @Summary Add records
 // @Description Add records
-// @Tags Record
+// @Tags ChatRecord
 // @Accept json
 // @Produce json
 // @Param json body AddRecordsRequest true "json"
@@ -203,7 +203,7 @@ func AddRecords(c *fiber.Ctx) (err error) {
 // @Router /api/records [get]
 // @Summary list my records
 // @Description list my records
-// @Tags Record
+// @Tags ChatRecord
 // @Accept json
 // @Produce json
 // @Success 200 {object} Records

@@ -27,7 +27,31 @@ func ListExams(ctx *fiber.Ctx) (err error) {
 		return
 	}
 	var exams Exams
-	err = DB.Where("user_id = ?", tmpUser.ID).Find(&exams).Error
+	err = DB.Where("user_id = ? and exam_type = 'exam'", tmpUser.ID).Find(&exams).Error
+	if err != nil {
+		return
+	}
+	return ctx.JSON(exams)
+}
+
+// ListDriverExams @ListDriverExams
+// @Router /api/drivers [get]
+// @Summary list my driver exams
+// @Description list my driver exams
+// @Tags Driver
+// @Accept json
+// @Produce json
+// @Success 200 {object} Exams
+// @Failure 400 {object} common.HttpError
+// @Failure 401 {object} common.HttpError
+// @param Authorization header string true "Bearer和token空格拼接"
+func ListDriverExams(ctx *fiber.Ctx) (err error) {
+	tmpUser, err := GetGeneralUser(ctx)
+	if err != nil {
+		return
+	}
+	var exams Exams
+	err = DB.Where("user_id = ? and exam_type = 'driver'", tmpUser.ID).Find(&exams).Error
 	if err != nil {
 		return
 	}

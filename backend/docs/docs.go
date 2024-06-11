@@ -200,7 +200,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Record"
+                    "ChatRecord"
                 ],
                 "summary": "list records by chat ID",
                 "parameters": [
@@ -260,7 +260,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Record"
+                    "ChatRecord"
                 ],
                 "summary": "list my records",
                 "parameters": [
@@ -279,6 +279,53 @@ const docTemplate = `{
                             "type": "array",
                             "items": {
                                 "$ref": "#/definitions/models.Record"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/common.HttpError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/drivers": {
+            "get": {
+                "description": "list my driver exams",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Driver"
+                ],
+                "summary": "list my driver exams",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer和token空格拼接",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Exam"
                             }
                         }
                     },
@@ -1106,7 +1153,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Record"
+                    "ChatRecord"
                 ],
                 "summary": "list my records",
                 "parameters": [
@@ -1151,7 +1198,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Record"
+                    "ChatRecord"
                 ],
                 "summary": "Add records",
                 "parameters": [
@@ -1596,6 +1643,9 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "normal": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1756,6 +1806,9 @@ const docTemplate = `{
                 "is_public": {
                     "type": "boolean"
                 },
+                "normal": {
+                    "type": "boolean"
+                },
                 "score": {
                     "type": "integer"
                 },
@@ -1886,6 +1939,8 @@ const docTemplate = `{
         "time.Duration": {
             "type": "integer",
             "enum": [
+                -9223372036854775808,
+                9223372036854775807,
                 1,
                 1000,
                 1000000,
@@ -1894,6 +1949,8 @@ const docTemplate = `{
                 3600000000000
             ],
             "x-enum-varnames": [
+                "minDuration",
+                "maxDuration",
                 "Nanosecond",
                 "Microsecond",
                 "Millisecond",
