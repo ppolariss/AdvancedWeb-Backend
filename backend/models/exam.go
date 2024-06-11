@@ -7,8 +7,8 @@ import (
 
 type Exam struct {
 	ID          int            `json:"id" gorm:"primaryKey"`
-	Title       string         `json:"title" gorm:"default:'exam'"`
-	Description string         `json:"description" gorm:"default:'description'"`
+	Title       string         `json:"title" gorm:"default:'default exam title'"`
+	Description string         `json:"description" gorm:"default:'default exam description'"`
 	StartTime   *MyTime        `json:"start_time"`
 	EndTime     *MyTime        `json:"end_time"`
 	Duration    time.Duration  `json:"duration"`

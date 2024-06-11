@@ -1602,6 +1602,15 @@ const docTemplate = `{
         "exam.EndExamResponse": {
             "type": "object",
             "properties": {
+                "info": {
+                    "type": "string"
+                },
+                "is_driver": {
+                    "type": "boolean"
+                },
+                "is_passed": {
+                    "type": "boolean"
+                },
                 "score": {
                     "type": "integer"
                 }

@@ -100,3 +100,33 @@ func DeleteUserByID(id int) error {
 		return nil
 	})
 }
+
+func ValidateDriver(id int) (bool, error) {
+	var user User
+	err := DB.Take(&user, id).Error
+	if err != nil {
+		return false, err
+	}
+	return user.Age >= 18 && user.IsPassed, nil
+}
+
+func (user *User) AddPunishment(score int) error {
+	return DB.Transaction(func(tx *gorm.DB) error {
+		var user User
+		err := tx.Take(&user, user.ID).Error
+		if err != nil {
+			return err
+		}
+		if user.Point <= score {
+			user.Point = 0
+			user.IsPassed = false
+		} else {
+			user.Point -= score
+		}
+		return tx.Model(&user).Select("Point", "IsPassed").Updates(&user).Error
+	})
+}
+
+func (user *User) ValidateDriver() bool {
+	return user.Age >= 18 && user.IsPassed
+}

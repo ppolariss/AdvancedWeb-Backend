@@ -1,11 +1,13 @@
 package exam
 
 import (
+	"fmt"
+	. "src/models"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/opentreehole/go-common"
 	"gorm.io/gorm"
-	. "src/models"
-	"time"
 )
 
 // ListExams @ListExams
@@ -146,6 +148,8 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
+	isDriver := false
+	info := "Oops, something went wrong"
 	var endExamRequest EndExamRequest
 	if err = ctx.BodyParser(&endExamRequest); err != nil {
 		return common.BadRequest("Invalid request body")
@@ -169,6 +173,7 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 			return
 		}
 		if exam.Score != 100 {
+			info = "Sorry, you didn't pass the exam"
 			return
 		}
 		var user User
@@ -177,14 +182,27 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 			return
 		}
 		if user.IsPassed {
+			info = "Congratulations! You have passed the exam"
 			return
 		}
+		if user.Age < 18 {
+			info = "Congratulations! You have passed the exam. However, you are not eligible for a driver's license because you are " + fmt.Sprintf("%d", user.Age) + " years old"
+			return
+		}
+		info = "Congratulations! You have passed the exam and obtained the driver's license"
+		isDriver = true
 		user.IsPassed = true
 		user.Point = 12
 		return DB.Model(&user).Select("IsPassed", "Point").UpdateColumns(&user).Error
 	})
+	if err != nil {
+		return
+	}
 	var endExamResponse = EndExamResponse{
-		Score: exam.Score,
+		Score:    exam.Score,
+		IsPassed: exam.Score == 100,
+		IsDriver: isDriver,
+		Info:     info,
 	}
 	return ctx.JSON(endExamResponse)
 }

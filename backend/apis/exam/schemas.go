@@ -24,7 +24,10 @@ type EndExamRequest struct {
 }
 
 type EndExamResponse struct {
-	Score int `json:"score"`
+	Score    int    `json:"score"`
+	IsPassed bool   `json:"is_passed"`
+	IsDriver bool   `json:"is_driver"`
+	Info     string `json:"info"`
 }
 
 type AddExamRequest struct {

@@ -74,8 +74,8 @@ func AddDriverPunishment(c *fiber.Ctx) (err error) {
 		if err != nil {
 			return
 		}
-		if !user.IsPassed {
-			return common.BadRequest("You don't have the driver's license")
+		if !user.ValidateDriver() {
+			return common.Forbidden("You don't have the driver's license")
 		}
 		if user.Point <= addPunishmentRequest.Score {
 			user.Point = 0
