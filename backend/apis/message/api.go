@@ -2,19 +2,23 @@ package message
 
 import (
 	"encoding/json"
-	"github.com/gofiber/fiber/v2"
-	"github.com/opentreehole/go-common"
 	"log"
 	"net/http"
+	"sort"
 	"src/config"
 	"src/utils"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/opentreehole/go-common"
+
 	//"github.com/gofiber/contrib/websocket"
-	"github.com/gofiber/websocket/v2"
-	client "github.com/gorilla/websocket"
 	"os"
 	"os/signal"
 	. "src/models"
 	"time"
+
+	"github.com/gofiber/websocket/v2"
+	client "github.com/gorilla/websocket"
 )
 
 // GetChat @GetChat
@@ -225,7 +229,11 @@ func ListMyRecords(c *fiber.Ctx) (err error) {
 	if err != nil {
 		return
 	}
-	return c.JSON(append(records, toRecords...))
+	records = append(records, toRecords...)
+	sort.Slice(records, func(i, j int) bool {
+		return records[i].ID > records[j].ID
+	})
+	return c.JSON(records)
 }
 
 //func Infer(c *websocket.Conn) (err error) {
