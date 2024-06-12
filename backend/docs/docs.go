@@ -252,7 +252,7 @@ const docTemplate = `{
         },
         "/api/chats/{id}/records/me": {
             "get": {
-                "description": "list my records",
+                "description": "list my records in a chat",
                 "consumes": [
                     "application/json"
                 ],
@@ -262,7 +262,7 @@ const docTemplate = `{
                 "tags": [
                     "ChatRecord"
                 ],
-                "summary": "list my records",
+                "summary": "list my records in a chat",
                 "parameters": [
                     {
                         "type": "string",
@@ -1946,9 +1946,25 @@ const docTemplate = `{
                 1000000,
                 1000000000,
                 60000000000,
+                3600000000000,
+                -9223372036854775808,
+                9223372036854775807,
+                1,
+                1000,
+                1000000,
+                1000000000,
+                60000000000,
                 3600000000000
             ],
             "x-enum-varnames": [
+                "minDuration",
+                "maxDuration",
+                "Nanosecond",
+                "Microsecond",
+                "Millisecond",
+                "Second",
+                "Minute",
+                "Hour",
                 "minDuration",
                 "maxDuration",
                 "Nanosecond",
