@@ -160,15 +160,23 @@ func GetUserIDFromWs(c *websocket.Conn) (int, error) {
 	if !ok {
 		return 0, common.Unauthorized()
 	}
+	userID := int(id.(float64))
+	var userJwtSecret UserJwtSecret
+	err = DB.Take(&userJwtSecret, userID).Error
+	if err != nil {
+		return 0, common.Unauthorized("Unauthorized")
+	}
+	CheckJWTToken(token, userJwtSecret.Secret)
 	return int(id.(float64)), nil
 }
 
-func LoadUserFromWs(c *websocket.Conn) (*User, error) {
+func LoadUserFromWs(c *websocket.Conn) (int, error) {
 	userID, err := GetUserIDFromWs(c)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	return LoadUserByID(userID)
+	return userID, nil
+	//LoadUserByID(userID)
 }
 
 // parseJWT extracts and parse token

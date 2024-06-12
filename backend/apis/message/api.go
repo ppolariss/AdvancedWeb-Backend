@@ -142,8 +142,8 @@ func ListChatRecords(c *fiber.Ctx) (err error) {
 
 // ListMyChatRecords @ListMyChatRecords
 // @Router /api/chats/{id}/records/me [get]
-// @Summary list my records
-// @Description list my records
+// @Summary list my records in a chat
+// @Description list my records in a chat
 // @Tags ChatRecord
 // @Accept json
 // @Produce json
@@ -259,6 +259,11 @@ func ListMyRecords(c *fiber.Ctx) (err error) {
 // @param Authorization header string true "Bearer和token空格拼接"
 func MossChat(c *websocket.Conn) {
 	var err error
+	userID, err := LoadUserFromWs(c)
+	if err != nil {
+		_ = c.WriteJSON(common.Unauthorized("Unauthorized"))
+		return
+	}
 	defer func() {
 		if err != nil {
 			utils.Logger.Error(
@@ -289,7 +294,7 @@ func MossChat(c *websocket.Conn) {
 	log.Println("Received message from client:", requestMessage)
 	go addRecord(AddRecordsRequest{
 		CreatedAt: time.Now(),
-		UserID:    0,
+		UserID:    userID,
 		RoomID:    "moss",
 		Type:      "toMoss",
 		ToID:      0,
@@ -339,7 +344,7 @@ func MossChat(c *websocket.Conn) {
 					UserID:    0,
 					RoomID:    "moss",
 					Type:      "fromMoss",
-					ToID:      0,
+					ToID:      userID,
 					Message:   mossResponse.Output,
 				})
 				return
