@@ -127,6 +127,7 @@ func ListDriverPunishments(c *fiber.Ctx) (err error) {
 }
 
 func ToModel(punishments DriverPunishments) (driverPunishmentResponses DriverPunishmentResponses) {
+	driverPunishmentResponses = make(DriverPunishmentResponses, 0)
 	for _, punishment := range punishments {
 		punishmentType := PunishmentTypeMap[punishment.PunishmentType]
 		if punishmentType == "" {
