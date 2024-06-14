@@ -11,16 +11,18 @@ const (
 )
 
 var PunishmentTypeMap = map[int8]string{
-	OverSpeed:      "超速",
-	IllegalParking: "违停",
-	NoBelts:        "未系安全带",
-	FlameOut:       "熄火",
-	RedLight:       "闯红灯",
-	NoLicensePlate: "无牌",
-	Unknown:        "未知",
-	CRASH:          "碰撞",
-	AIRCRASH:       "坠机",
-	PHONING:        "打电话",
+	Unknown:         "未知",
+	OverSpeed:       "超速",
+	IllegalParking:  "违停",
+	NoBelts:         "未系安全带",
+	FlameOut:        "熄火",
+	RedLight:        "闯红灯",
+	NoLicensePlate:  "无牌",
+	CRASH:           "碰撞",
+	AIRCRASH:        "坠机",
+	PHONING:         "打电话",
+	FREEQUENTLYBEEP: "频繁鸣笛",
+	INCORRECTLIGHT:  "灯光不当",
 }
 
 const (
@@ -34,6 +36,8 @@ const (
 	CRASH
 	AIRCRASH
 	PHONING
+	FREEQUENTLYBEEP
+	INCORRECTLIGHT
 )
 
 type ExamPunishment struct {
