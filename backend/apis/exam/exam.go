@@ -201,9 +201,24 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 	exam.Normal = endExamRequest.Normal
 	exam.EndTime = &MyTime{Time: time.Now()}
 	exam.Duration = exam.EndTime.Time.Sub(exam.StartTime.Time)
+	var endExamResponse EndExamResponse
 	err = DB.Transaction(func(tx *gorm.DB) (err error) {
-		err = DB.Model(&exam).Select("EndTime", "Duration", "Normal").UpdateColumns(&exam).Error
+		err = tx.Model(&exam).Select("EndTime", "Duration", "Normal").UpdateColumns(&exam).Error
 		if err != nil {
+			return
+		}
+		if exam.ExamType != "exam" {
+			var user User
+			err = tx.Take(&user, tmpUser.ID).Error
+			if err != nil {
+				return
+			}
+			endExamResponse = EndExamResponse{
+				Score:    user.Point,
+				Info:     "Cool! You've had a great road trip",
+				IsPassed: user.IsPassed,
+				IsDriver: user.IsPassed,
+			}
 			return
 		}
 		if exam.Score != 100 {
@@ -231,16 +246,18 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 		isDriver = true
 		user.IsPassed = true
 		user.Point = 12
-		return DB.Model(&user).Select("IsPassed", "Point").UpdateColumns(&user).Error
+		return tx.Model(&user).Select("IsPassed", "Point").UpdateColumns(&user).Error
 	})
 	if err != nil {
 		return
 	}
-	var endExamResponse = EndExamResponse{
-		Score:    exam.Score,
-		IsPassed: exam.Score == 100,
-		IsDriver: isDriver,
-		Info:     info,
+	if exam.ExamType == "exam" {
+		endExamResponse = EndExamResponse{
+			Score:    exam.Score,
+			IsPassed: exam.Score == 100,
+			IsDriver: isDriver,
+			Info:     info,
+		}
 	}
 	return ctx.JSON(endExamResponse)
 }
