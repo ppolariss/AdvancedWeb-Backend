@@ -207,12 +207,12 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 		if err != nil {
 			return
 		}
+		var user User
+		err = tx.Take(&user, tmpUser.ID).Error
+		if err != nil {
+			return
+		}
 		if exam.ExamType != "exam" {
-			var user User
-			err = tx.Take(&user, tmpUser.ID).Error
-			if err != nil {
-				return
-			}
 			endExamResponse = EndExamResponse{
 				Score:    user.Point,
 				Info:     "Cool! You've had a great road trip",
@@ -229,13 +229,10 @@ func EndExam(ctx *fiber.Ctx) (err error) {
 			info = "Sorry, you quit the exam in advance"
 			return
 		}
-		var user User
-		err = DB.Take(&user, tmpUser.ID).Error
-		if err != nil {
-			return
-		}
+
 		if user.IsPassed {
 			info = "Congratulations! You have passed the exam"
+			isDriver = true
 			return
 		}
 		if user.Age < 18 {
