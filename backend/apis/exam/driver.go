@@ -142,6 +142,7 @@ func ToModel(punishments DriverPunishments) (driverPunishmentResponses DriverPun
 			Reason:         punishment.Reason,
 			Score:          punishment.Score,
 			PunishmentType: punishmentType,
+			CreatedAt:      punishment.CreatedAt,
 		})
 	}
 	return
