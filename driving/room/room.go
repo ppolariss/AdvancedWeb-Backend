@@ -152,8 +152,8 @@ func Room(io *socket.Server) (err error) {
 				// err = io.Of(socket.Room(chat.RoomID), nil).Emit("message", chat)
 			} else if chat.Type == "private" {
 				// TODO
-				err = io.Of("/room", nil).To(socket.Room(roomID)).Emit("message", chat)
-				// err = io.Of(socket.Room(chat.ID), nil).Emit("message", chat)
+				// err = io.Of("/room", nil).To(socket.Room(roomID)).Emit("message", chat)
+				err = io.Of("/room", nil).To(socket.Room(chat.ToID)).Emit("message", chat)
 			}
 			if err != nil {
 				utils.Logger.Error(err.Error())
