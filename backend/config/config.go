@@ -6,6 +6,7 @@ import (
 )
 
 var Config struct {
+	Mode       string `env:"MODE" envDefault:"dev"`
 	MossUrl    string `env:"MOSS_URL"`
 	MossApiKey string `env:"MOSS_API_KEY"`
 	RedisUrl   string `env:"REDIS_URL"`
