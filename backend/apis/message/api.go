@@ -444,8 +444,13 @@ func HandleMessages() {
 		log.Println(msg.C)
 		log.Println(string(msg.Message))
 		mu.Lock()
+		afterSelf := false
 		for c := range clients {
 			if c == msg.C {
+				afterSelf = true
+				continue
+			}
+			if !afterSelf {
 				continue
 			}
 			err = c.WriteMessage(websocket.TextMessage, msg.Message)
