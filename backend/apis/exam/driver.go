@@ -5,6 +5,7 @@ import (
 	"github.com/opentreehole/go-common"
 	"gorm.io/gorm"
 	. "src/models"
+	"time"
 )
 
 // GetDriverPunishment @GetDriverPunishment
@@ -67,6 +68,9 @@ func AddDriverPunishment(c *fiber.Ctx) (err error) {
 		Reason:         addPunishmentRequest.Reason,
 		Score:          addPunishmentRequest.Score,
 		PunishmentType: addPunishmentRequest.PunishmentType,
+		CreatedAt: MyTime{
+			Time: time.Now(),
+		},
 	}
 	err = DB.Transaction(func(tx *gorm.DB) (err error) {
 		var user User
