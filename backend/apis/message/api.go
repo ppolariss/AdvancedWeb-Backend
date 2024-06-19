@@ -444,15 +444,21 @@ func HandleMessages() {
 		log.Println(msg.C)
 		log.Println(string(msg.Message))
 		mu.Lock()
-		afterSelf := false
+		// afterSelf := false
 		for c := range clients {
 			if c == msg.C {
-				afterSelf = true
+				// afterSelf = true
 				continue
 			}
-			if !afterSelf {
+			if peers[msg.C] == nil {
+				peers[msg.C] = c
+				peers[c] = msg.C
+			} else if peers[msg.C] != c {
 				continue
 			}
+			// if !afterSelf {
+			// 	continue
+			// }
 			err = c.WriteMessage(websocket.TextMessage, msg.Message)
 			if err != nil {
 				log.Println(websocket.IsCloseError(err, client.CloseNormalClosure))

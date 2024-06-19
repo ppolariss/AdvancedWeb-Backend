@@ -38,6 +38,7 @@ var (
 	clients   = make(map[*websocket.Conn]bool)
 	broadcast = make(chan VideoMessage)
 	mu        sync.Mutex
+	peers     = make(map[*websocket.Conn]*websocket.Conn)
 )
 
 //type VideoMessage struct {
