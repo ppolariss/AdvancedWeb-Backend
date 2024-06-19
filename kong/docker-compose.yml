@@ -1,0 +1,71 @@
+networks:
+  default:
+    #driver: bridge
+    name: kong
+    external: true
+#networks:
+#  advanced-web-network:
+#    driver: bridge
+#    name: advanced-web-network
+
+volumes:
+  db-data:
+  shared_volume:
+
+services:
+  advanced-web-backend-service:
+    container_name: advanced-web-backend-service
+    image: ppolariss/advanced_web_backend:latest
+    restart: unless-stopped
+    environment:
+      - DB_URL=user:password@tcp(db-service:3306)/advanced_web?charset=utf8mb4&parseTime=True&loc=Local
+      - MOSS_URL=wss://moss.fastnlp.top/api/ws/inference
+      - MOSS_API_KEY=${MOSS_API_KEY}
+      - TZ=Asia/Shanghai
+#    networks:
+#      - advanced-web-network
+#    ports:
+#      - "8080:8080"
+    volumes:
+      # - /home/ubuntu/AdvancedWeb-Backend/html:/app/html
+      - /home/ubuntu/AdvancedWeb-Backend/html/assets:/app/html/assets
+      - shared_volume:/app/html
+
+  db-service:
+    container_name: db-service
+    image: mysql:8.0.34
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: advanced_web
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      TZ: Asia/Shanghai
+#    networks:
+#      - advanced-web-network
+    ports:
+      - "13306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./my.cnf:/etc/my.cnf
+
+  driving-service:
+    container_name: driving-service
+    image: ppolariss/driving:latest
+    restart: unless-stopped
+#    networks:
+#      - advanced-web-network
+    ports:
+      - "3000:3000"
+
+  advanced-web-frontend-service:
+    container_name: advanced-web-frontend-service
+    image: ppolariss/advanced_web_frontend:latest
+    restart: unless-stopped
+#    networks:
+#      - advanced-web-network
+#    ports:
+#      - "80:80"
+    volumes:
+      - /home/ubuntu/AdvancedWeb-Backend/html/assets:/usr/share/nginx/html/assets
+      - shared_volume:/usr/share/nginx/html
