@@ -32,7 +32,7 @@ func GetDriverPunishment(c *fiber.Ctx) (err error) {
 		return
 	}
 	var driverPunishments DriverPunishments
-	err = DB.Where("id = ? and user_id = ?", punishmentID, tmpUser.ID).Find(&driverPunishments).Error
+	err = DB.Where("id = ? and user_id = ?", punishmentID, tmpUser.ID).Order("id desc").Find(&driverPunishments).Error
 	if err != nil {
 		return
 	}

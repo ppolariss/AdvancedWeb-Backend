@@ -41,11 +41,11 @@ const (
 )
 
 type ExamPunishment struct {
-	ID             int
-	CreatedAt      MyTime
-	User           *User  `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	ID             int    `json:"id" gorm:"primaryKey"`
+	CreatedAt      MyTime `json:"created_at"`
+	User           *User  `json:"user" gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	UserID         int    `json:"user_id" gorm:"index:idx_punishment_user,priority:1"`
-	Exam           *Exam  `gorm:"foreignKey:ExamID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Exam           *Exam  `json:"exam" gorm:"foreignKey:ExamID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 	ExamID         int    `json:"exam_id" gorm:"index:idx_punishment_exam,priority:1"`
 	PunishmentType int8   `json:"punishment_type" gorm:"index:idx_punishment_type,priority:3"`
 	Reason         string `json:"reason"`
