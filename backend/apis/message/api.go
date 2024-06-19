@@ -412,6 +412,8 @@ func VideoChat(c *websocket.Conn) {
 
 	mu.Lock()
 	clients[c] = true
+	log.Println("clients", clients)
+	log.Println("length of clients", len(clients))
 	mu.Unlock()
 
 	log.Println("connection")
@@ -448,6 +450,8 @@ func HandleMessages() {
 			}
 			err = c.WriteMessage(websocket.TextMessage, msg.Message)
 			if err != nil {
+				log.Println(websocket.IsCloseError(err, client.CloseNormalClosure))
+				log.Println(websocket.IsUnexpectedCloseError(err, client.CloseNormalClosure))
 				utils.Logger.Error("error: %v", err)
 				err = c.Close()
 				if err != nil {
